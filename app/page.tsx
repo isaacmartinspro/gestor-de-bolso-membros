@@ -1,11 +1,9 @@
-import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
-
-export default async function HomePage() {
-  const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  redirect(user ? "/portal" : "/login");
+export default function HomePage() {
+  return (
+    <iframe
+      title="Gestor de Bolso"
+      src="/lp.html"
+      style={{ width: "100vw", height: "100vh", border: "none", display: "block" }}
+    />
+  );
 }

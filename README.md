@@ -31,6 +31,12 @@ No Supabase, abra **SQL Editor** e rode o conteúdo do arquivo
 `supabase/schema.sql` deste projeto. Isso cria a tabela `subscribers` e as
 regras de segurança.
 
+Depois, rode também o `supabase/schema-admin.sql` — esse arquivo cria as
+tabelas `themes`, `frameworks` e `notices` (usadas pela área de admin) e já
+migra os 200 frameworks e as 16 áreas que existiam no arquivo estático para
+dentro do banco. É um arquivo grande (o SQL Editor aceita numa única
+execução).
+
 ### 3. Configurar o e-mail de convite (criar senha)
 Em **Authentication > Email Templates** no Supabase, edite o template
 **"Invite user"** — é esse e-mail que a pessoa recebe para criar a senha.
@@ -101,9 +107,27 @@ middleware.ts           — protege as rotas /portal e /api/portal-content
 
 ## Atualizando o conteúdo do Gestor de Bolso
 
-Sempre que adicionar novos frameworks ao portal, é só substituir o arquivo
-`private/gestor-de-bolso-content.html` pela versão mais recente e fazer
-um novo deploy — não precisa mexer em mais nada.
+A partir de agora, os frameworks **não ficam mais** no arquivo
+`private/gestor-de-bolso-content.html` — eles vivem na tabela `frameworks`
+do Supabase, e o portal busca tudo dinamicamente via `/api/frameworks`.
+Para adicionar, editar ou remover frameworks, use a área de admin (veja
+abaixo) em vez de editar o arquivo.
+
+## Área de administração (`/admin`)
+
+Acesse `https://SEU-DOMINIO/admin` logado com um e-mail que esteja na
+variável de ambiente `ADMIN_EMAILS`. A área tem 3 abas:
+
+- **Frameworks** — criar, editar e remover frameworks do catálogo
+- **Assinantes** — ver todos (nome, e-mail, plano, status, último acesso),
+  adicionar alguém manualmente (dispara o e-mail de criar senha
+  automaticamente) e remover acesso de alguém
+- **Avisos** — publicar uma mensagem em destaque no topo do portal para
+  todos os assinantes (some quando a pessoa clica em "Fechar", e não
+  volta a aparecer para ela na mesma sessão)
+
+Para adicionar outro administrador, edite a variável `ADMIN_EMAILS` (separe
+vários e-mails por vírgula) e refaça o deploy.
 
 ## Sobre os planos e preços
 
