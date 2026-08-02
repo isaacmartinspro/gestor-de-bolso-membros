@@ -390,8 +390,1803 @@
 </div>
 
 <script>
-let THEMES = [];
-let ITEMS = [];
+const THEMES = [
+  { id:'comercial', name:'Gestão Comercial', icon:'📈', desc:'Funil, negociação, relacionamento com cliente' },
+  { id:'vendas', name:'Vendas', icon:'💰', desc:'Técnicas de venda, abordagem e fechamento no dia a dia' },
+  { id:'financeira', name:'Gestão Financeira', icon:'💳', desc:'Caixa, custos, preço, relatórios' },
+  { id:'planilha', name:'Análise de Planilha', icon:'📊', desc:'Leitura de dados, indicadores, insights' },
+  { id:'contratacao', name:'Contratação', icon:'🧩', desc:'Vaga, triagem, entrevista, onboarding' },
+  { id:'treinamento', name:'Treinamento', icon:'🎓', desc:'Trilhas, planos de aula, material de equipe' },
+  { id:'feedback', name:'Feedback', icon:'🗣️', desc:'Conversas difíceis, avaliação, reconhecimento' },
+  { id:'monitoramento', name:'Monitoramento', icon:'🛰️', desc:'Rotina, indicadores do time, alertas' },
+  { id:'qualidade', name:'Qualidade', icon:'✅', desc:'Padrão de processo, checklist, não conformidade' },
+  { id:'performance', name:'Gestão de Performance', icon:'🎯', desc:'Metas, OKRs, PDI, baixa performance' },
+  { id:'tempo', name:'ADM do Tempo', icon:'⏱️', desc:'Priorização, agenda, rotina e planejamento estratégico' },
+  { id:'mentor', name:'Mentor', icon:'🧭', desc:'Conselho, decisão, desenvolvimento de liderança' },
+  { id:'marketing', name:'Marketing', icon:'📣', desc:'Divulgação local, campanhas simples, marca' },
+  { id:'revisor', name:'Revisor', icon:'🔍', desc:'Revisão de texto, contrato, e-mail, documento' },
+  { id:'leitor', name:'Leitor de PDF e E-mails', icon:'📥', desc:'Resumo de arquivos, extração de informação' },
+  { id:'apresentacoes', name:'Apresentações', icon:'📽️', desc:'Slides profissionais com visual fotorrealista e conteúdo completo' },
+];
+
+const ITEMS = [
+{ theme:'comercial', title:'Diagnóstico de Funil de Vendas', diff:'INTERMEDIÁRIO', type:'ANÁLISE',
+  desc:'Você não sabe em qual etapa do funil as vendas estão travando — a IA aponta o gargalo exato e a ação da semana.',
+  prompt:`Você é um consultor de vendas sênior. Analise meu funil e aponte onde está o maior gargalo.
+
+Etapas (últimos [PERÍODO]):
+- Leads gerados: [NÚMERO] | Qualificados: [NÚMERO] | Reuniões: [NÚMERO] | Propostas: [NÚMERO] | Vendas: [NÚMERO]
+
+Me diga: 1) qual etapa tem a queda mais crítica, 2) as 3 causas mais prováveis, 3) uma ação prática para essa semana, 4) um indicador para acompanhar se funcionou.`},
+{ theme:'comercial', title:'Roteiro de Cold Call Consultivo', diff:'BÁSICO', type:'FRAMEWORK',
+  desc:'Monta um roteiro de ligação fria focado em diagnóstico, não em oferta forçada.',
+  prompt:`Crie um roteiro de cold call consultivo para minha equipe.
+
+Produto/serviço: [O QUE VENDEMOS]
+Perfil do cliente ideal: [DESCREVA]
+Principal dor que resolvemos: [DOR]
+
+Inclua: abertura de 15s que gere permissão, 3 perguntas de diagnóstico, uma conexão dor-solução, um fechamento que agende o próximo passo, e respostas para 2 objeções comuns.`},
+{ theme:'comercial', title:'Negociação de Desconto sem Perder Margem', diff:'AVANÇADO', type:'FRAMEWORK',
+  desc:'Cliente pede desconto — a IA monta a resposta que protege a margem e ainda fecha a venda.',
+  prompt:`Atue como especialista em negociação comercial. O cliente está pedindo desconto.
+
+Contexto: produto [PRODUTO], preço tabela [VALOR], desconto pedido [%], minha margem mínima aceitável [%], motivo alegado pelo cliente [DESCREVA].
+
+Me dê: 1) uma resposta que não recue direto no preço, 2) 3 contrapartidas que eu possa oferecer no lugar do desconto, 3) o ponto exato até onde posso ceder, 4) uma frase de fechamento se ele aceitar a contraproposta.`},
+{ theme:'comercial', title:'Script de Prospecção via WhatsApp', diff:'BÁSICO', type:'TEMPLATE',
+  desc:'Gera uma sequência de mensagens de prospecção pelo WhatsApp sem parecer spam.',
+  prompt:`Crie uma sequência de 3 mensagens de prospecção via WhatsApp.
+
+Público-alvo: [DESCREVA]
+Oferta/gancho: [O QUE OFERECEMOS]
+Tom desejado: [FORMAL/INFORMAL]
+
+Mensagem 1: gancho curto e pergunta. Mensagem 2 (se não responder em 2 dias): valor sem pressão. Mensagem 3 (se não responder em 5 dias): última tentativa com saída elegante.`},
+{ theme:'comercial', title:'Plano de Recuperação de Clientes Inativos', diff:'INTERMEDIÁRIO', type:'FRAMEWORK',
+  desc:'Cria uma campanha de reativação segmentada por potencial de retorno.',
+  prompt:`Crie um plano de reativação de clientes inativos.
+
+Total de inativos: [NÚMERO] | Tempo médio de inatividade: [TEMPO] | Canal disponível: [WHATSAPP/E-MAIL/TELEFONE]
+
+Monte: 1) segmentação em 3 grupos por potencial, 2) mensagem diferente por grupo, 3) oferta para o grupo de maior potencial, 4) cronograma de contatos em 21 dias, 5) métrica de sucesso.`},
+{ theme:'comercial', title:'Proposta Comercial Persuasiva', diff:'INTERMEDIÁRIO', type:'GERAÇÃO',
+  desc:'Transforma uma oferta simples em proposta comercial que vende o valor, não só o preço.',
+  prompt:`Escreva uma proposta comercial persuasiva.
+
+Cliente: [NOME/PERFIL] | O que estamos oferecendo: [PRODUTO/SERVIÇO] | Problema do cliente que resolvemos: [DOR] | Preço: [VALOR] | Diferencial competitivo: [DESCREVA]
+
+Estruture: abertura conectando com a dor, apresentação da solução, 3 benefícios concretos (não genéricos), prova social ou resultado esperado, e uma chamada para ação clara com prazo.`},
+{ theme:'comercial', title:'Oportunidades na Carteira', diff:'INTERMEDIÁRIO', type:'ANÁLISE',
+  desc:'Analisa a carteira de clientes e aponta quem tem mais chance de comprar essa semana, com sugestão de abordagem pronta.',
+  prompt:`Anexe/cole sua carteira de clientes com histórico de compra: [COLE OS DADOS: CLIENTE, ÚLTIMA COMPRA, PRODUTOS COMPRADOS, FREQUÊNCIA, TICKET MÉDIO]
+
+Produtos/serviços que vendo hoje: [DESCREVA]
+
+Analise a carteira e me diga: 1) quais clientes têm maior probabilidade de comprar essa semana e por quê, 2) qual produto/serviço oferecer para cada um deles, 3) uma sugestão de abordagem pronta por telefone, e-mail e WhatsApp para os 3 clientes mais quentes.`},
+{ theme:'comercial', title:'Análise do BI', diff:'INTERMEDIÁRIO', type:'ANÁLISE',
+  desc:'Envia o print do BI e a IA resume o que está acontecendo e aponta 3 oportunidades de ação.',
+  prompt:`Vou anexar um print do meu BI/dashboard de vendas. [ANEXE A IMAGEM]
+
+Contexto: o que esse painel mede: [DESCREVA OS INDICADORES QUE APARECEM NO BI]
+
+Analise a imagem em detalhe e me diga: 1) um resumo em linguagem simples do que está bom e do que não está, 2) os 2 números que mais chamam atenção, 3) 3 oportunidades concretas de ação para essa semana com base no que o painel mostra.`},
+{ theme:'comercial', title:'Mercado Quente', diff:'INTERMEDIÁRIO', type:'ANÁLISE',
+  desc:'Busca as notícias mais recentes do seu mercado e transforma em oportunidades de abordagem comercial.',
+  prompt:`Você tem acesso à internet. Pesquise as notícias mais recentes sobre o mercado abaixo.
+
+Meu segmento/nicho: [DESCREVA] | Meu produto/serviço: [DESCREVA] | Região de atuação: [CIDADE/ESTADO/PAÍS]
+
+Busque e me traga: 1) as principais notícias e movimentos do meu mercado nos últimos 30 dias, 2) empresas ou clientes grandes que estão em expansão, contratando ou investindo nesse mercado, 3) 3 oportunidades concretas de abordagem comercial que minha equipe pode usar a partir dessas notícias, com o gancho exato para puxar o assunto.`},
+{ theme:'comercial', title:'Prospecção de Alta Performance', diff:'BÁSICO', type:'FRAMEWORK',
+  desc:'Direciona a busca de leads qualificados para a ferramenta de SDR do Instituto Isaac Martins.',
+  prompt:`Preciso de leads qualificados para o meu negócio/nicho: [DESCREVA O PERFIL DE CLIENTE IDEAL]
+
+Acesse www.isaacmartins.com.br/sdr e utilize a ferramenta de prospecção de alta performance para buscar e organizar leads qualificados dentro desse perfil, pronto para minha equipe entrar em contato.`},
+{ theme:'comercial', title:'Reunião de Daily', diff:'BÁSICO', type:'FRAMEWORK',
+  desc:'Monta o roteiro da reunião diária com mensagem motivacional e leitura do relatório do dia anterior.',
+  prompt:`Vou anexar/colar o relatório de vendas de ontem da equipe. [ANEXE OU COLE OS DADOS: VENDEDOR, CONTATOS, PROPOSTAS, VENDAS]
+
+Meta do dia de hoje: [VALOR/NÚMERO] | Tom da reunião: [ENERGÉTICO/SÉRIO]
+
+Monte o roteiro da reunião diária (daily) com: 1) uma mensagem motivacional de abertura de 30 segundos, 2) leitura do relatório de ontem destacando o que foi bem (elogiando quem se destacou, se informado) e os pontos críticos sem constranger ninguém publicamente, 3) 2 dicas práticas de como vender mais hoje com base no que os dados mostraram, 4) um fechamento reforçando a meta do dia.`},
+{ theme:'comercial', title:'Objeções', diff:'AVANÇADO', type:'FRAMEWORK',
+  desc:'Trata objeções pela causa raiz (dinheiro, confiança, urgência ou necessidade) em vez de rebater o sintoma — com foco especial no "vou pensar".',
+  prompt:`Você é um especialista em vendas consultivas e gestão de objeções para empreendedores digitais. Seus princípios: (1) objeção não é rejeição — é um pedido de mais informação ou reasseguramento, (2) a resposta ideal valida a preocupação do cliente antes de rebatê-la — nunca comece contradizendo, (3) cada objeção tem uma causa raiz: falta de dinheiro, falta de confiança, falta de urgência ou falta de necessidade percebida — a resposta deve atacar a causa, não o sintoma, (4) uma boa resposta de objeção cria empatia, esclarece e convida a continuar — não pressiona.
+
+Produto/Serviço: [O QUE VOCÊ VENDE]
+Preço: [VALOR DO PRODUTO]
+Principais objeções que você recebe: [LISTE DE 3 A 7 — EX: "É CARO", "NÃO TENHO TEMPO", "PRECISO PENSAR"]
+Tom de comunicação: [EX: PRÓXIMO E INFORMAL / PROFISSIONAL / CONSULTIVO]
+Canal de atendimento: [DM INSTAGRAM / WHATSAPP / COMENTÁRIO / PRESENCIAL]
+
+Entregue:
+
+1. Resposta completa para cada objeção
+Para cada objeção: validação da preocupação (1 linha) + resposta que desmonta a lógica da objeção (2-4 linhas) + pergunta de avanço que mantém a conversa (1 linha).
+
+2. Resposta para o "vou pensar"
+Script específico para o "vou pensar / vou ver / te falo depois" — a objeção mais comum e menos tratada.
+
+3. Mensagem de follow-up
+Template de mensagem para reabrir a conversa 24-48h depois sem parecer insistente.`},
+{ theme:'comercial', title:'Performance do Time', diff:'INTERMEDIÁRIO', type:'ANÁLISE',
+  desc:'Sobe o relatório de produtividade do time e a IA compara com o mercado e com o próprio time, propondo ações práticas.',
+  prompt:`Vou anexar/colar o relatório de produtividade da minha equipe. [ANEXE OU COLE OS DADOS: VENDEDOR, Nº DE CONTATOS, PROPOSTAS, VENDAS, TICKET MÉDIO]
+
+Meu segmento: [DESCREVA] | Benchmark de mercado que conheço (se tiver): [DESCREVA OU "NÃO SEI, ME AJUDE A ESTIMAR"]
+
+Analise e me diga: 1) como a performance do time está comparada ao mercado do meu segmento, 2) como está a performance interna (quem está acima e abaixo da média do próprio time, sem julgar, só apontar o padrão), 3) 3 ações práticas para melhorar a performance geral do time nas próximas 2 semanas.`},
+{ theme:'comercial', title:'Conquista de Novos Clientes (Plano de Prospecção Focado)', diff:'INTERMEDIÁRIO', type:'FRAMEWORK',
+  desc:'Ataca a maior dificuldade de donos de negócio no Brasil segundo o Sebrae — conquistar clientes — com um plano de prospecção realista para o seu porte.',
+  prompt:`Segundo pesquisas do Sebrae, conquistar clientes é a maior dificuldade de donos de pequenos negócios no Brasil. Me ajude a atacar esse problema no meu negócio.
+
+Produto/serviço: [DESCREVA] | Canal que já uso hoje para conquistar clientes: [DESCREVA OU "NENHUM AINDA"] | Verba disponível para isso: [VALOR OU "BAIXA/NENHUMA"] | Tempo que posso dedicar por semana: [HORAS]
+
+Monte um plano de conquista de clientes realista para o meu porte: 1) os 2 canais mais eficientes para o meu tipo de negócio com esse orçamento, 2) uma meta semanal realista de novos contatos/leads, 3) um roteiro simples de primeira abordagem, 4) um erro comum que donos de pequenos negócios cometem nessa fase e que eu devo evitar.`},
+{ theme:'comercial', title:'Retenção de Clientes e Aumento de LTV', diff:'AVANÇADO', type:'FRAMEWORK',
+  desc:'Foca no crescimento que vem de quem já é cliente — mais rápido e barato do que conquistar clientes novos.',
+  prompt:`Expandir a receita da base atual de clientes (aumentar o LTV) costuma ser mais rápido e barato do que conquistar clientes novos. Me ajude a estruturar isso.
+
+Ticket médio atual: [VALOR] | Frequência média de recompra: [DESCREVA] | O que já ofereço para clientes recorrentes hoje: [DESCREVA OU "NADA ESPECÍFICO"]
+
+Monte um plano de retenção e aumento de LTV: 1) 3 formas de aumentar a frequência de recompra desse cliente, 2) 2 oportunidades de upsell/cross-sell realistas para o meu produto, 3) uma ação de fidelização de baixo custo, 4) um indicador simples para acompanhar se o LTV está subindo.`},
+{ theme:'comercial', title:'Diagnóstico de Conhecimento sobre Cliente e Concorrência', diff:'INTERMEDIÁRIO', type:'ANÁLISE',
+  desc:'Avalia o quanto você realmente conhece seu cliente e concorrência — apontado pelo Sebrae como ponto fraco comum entre donos de pequenos negócios.',
+  prompt:`Segundo o Sebrae, pouco conhecimento do cliente e da concorrência é um dos principais motivos de dificuldade das pequenas empresas. Me ajude a fazer esse diagnóstico.
+
+O que eu sei sobre meu cliente ideal hoje: [DESCREVA] | O que eu sei sobre meus concorrentes hoje: [DESCREVA]
+
+Analise minhas respostas e me diga: 1) quais lacunas de conhecimento sobre o cliente são mais graves para o meu negócio, 2) quais lacunas sobre a concorrência são mais graves, 3) 3 perguntas específicas que eu preciso responder sobre meu cliente nos próximos 30 dias, 4) uma forma simples e barata de coletar essas informações, sem precisar de pesquisa cara.`},
+{ theme:'vendas', title:'Scripts de Prospecção', diff:'BÁSICO', type:'TEMPLATE',
+  desc:'Gera scripts de prospecção prontos para abordar novos leads pelo canal certo.',
+  prompt:`Crie scripts de prospecção para abordar novos leads.
+
+Produto/serviço: [O QUE VENDO] | Perfil do lead: [DESCREVA] | Canal principal: [TELEFONE/WHATSAPP/E-MAIL/PRESENCIAL]
+
+Gere: um script de abertura que gere interesse nos primeiros 10 segundos, 3 perguntas de qualificação, e uma frase de transição para agendar o próximo passo.`},
+{ theme:'vendas', title:'Scripts de Resgate de Inativos', diff:'INTERMEDIÁRIO', type:'TEMPLATE',
+  desc:'Cria scripts para reabordar clientes que pararam de comprar, sem soar de cobrança.',
+  prompt:`Crie scripts para resgatar clientes inativos.
+
+Tempo médio de inatividade: [TEMPO] | Motivo provável do afastamento (se souber): [DESCREVA] | Canal: [WHATSAPP/TELEFONE/E-MAIL]
+
+Gere 3 versões de mensagem (curta, média, com oferta), todas com tom de reconexão genuína — nada de "sentimos sua falta" genérico.`},
+{ theme:'vendas', title:'Scripts de Clientes Ativos', diff:'BÁSICO', type:'TEMPLATE',
+  desc:'Cria scripts para aumentar recorrência e ticket médio com quem já compra de você.',
+  prompt:`Crie scripts para abordar clientes ativos (upsell/cross-sell).
+
+Produto que o cliente já compra: [DESCREVA] | Produto complementar que quero oferecer: [DESCREVA] | Frequência de compra do cliente: [DESCREVA]
+
+Gere uma mensagem que reconhece o histórico do cliente, apresenta o novo produto como continuidade natural (não como venda forçada), e termina com uma pergunta que abre espaço para o cliente confirmar interesse.`},
+{ theme:'vendas', title:'Abordagens pelo WhatsApp', diff:'INTERMEDIÁRIO', type:'FRAMEWORK',
+  desc:'Estrutura abordagens de venda pelo WhatsApp com tom consultivo, sem parecer spam.',
+  prompt:`Crie uma abordagem de venda pelo WhatsApp para o cenário abaixo.
+
+Estágio do lead: [FRIO/MORNO/QUENTE] | Produto/serviço: [DESCREVA] | Objetivo da mensagem: [AGENDAR/FECHAR/REATIVAR]
+
+Monte: a mensagem de abertura (curta, sem parecer robótica), como conduzir a conversa em áudio ou texto conforme o momento do lead, e uma frase de fechamento adequada ao estágio em que ele está.`},
+{ theme:'vendas', title:'Criação de Templates de API Oficial no WhatsApp', diff:'INTERMEDIÁRIO', type:'TEMPLATE',
+  desc:'Gera templates de mensagem dentro das regras da API Oficial do WhatsApp Business.',
+  prompt:`Crie um template de mensagem para a API Oficial do WhatsApp Business.
+
+Categoria do template: [MARKETING/UTILIDADE/AUTENTICAÇÃO] | Objetivo da mensagem: [DESCREVA] | Variáveis que preciso usar: [EX: NOME, PRODUTO, DATA]
+
+Gere o texto do template respeitando os limites e boas práticas de aprovação da Meta (sem linguagem promocional agressiva em templates de utilidade), com os placeholders de variável no formato {{1}}, {{2}}, etc.`},
+{ theme:'vendas', title:'Elaboração de Propostas', diff:'INTERMEDIÁRIO', type:'GERAÇÃO',
+  desc:'Gera uma proposta comercial completa, pronta para enviar ao cliente.',
+  prompt:`Elabore uma proposta comercial completa a partir das informações abaixo.
+
+Cliente: [NOME/PERFIL] | Solução oferecida: [DESCREVA] | Investimento: [VALOR] | Prazo de entrega/execução: [DESCREVA] | Diferenciais: [LISTAR]
+
+Estruture a proposta com: abertura, entendimento do problema do cliente, a solução proposta, escopo detalhado, investimento e condições de pagamento, prazo de validade da proposta, e uma chamada final para assinatura/aceite.`},
+{ theme:'vendas', title:'Funil de Follow-up', diff:'INTERMEDIÁRIO', type:'FRAMEWORK',
+  desc:'Cria uma sequência estruturada de follow-up para não deixar propostas esfriarem.',
+  prompt:`Crie um funil de follow-up para propostas enviadas que ainda não tiveram resposta.
+
+Tipo de venda: [CICLO CURTO/LONGO] | Canal disponível: [WHATSAPP/E-MAIL/TELEFONE] | Tempo médio que o cliente demora a decidir: [DESCREVA]
+
+Monte uma sequência de contatos (quantidade, intervalo entre eles, canal de cada um), com uma mensagem diferente para cada toque (nunca repetir "só passando para saber se viu"), e o ponto em que devo considerar a venda perdida.`},
+{ theme:'vendas', title:'Técnicas de Vendas', diff:'BÁSICO', type:'FRAMEWORK',
+  desc:'Recomenda as técnicas de venda mais indicadas para o seu tipo de produto e cliente.',
+  prompt:`Me recomende as técnicas de venda mais indicadas para o meu contexto.
+
+Produto/serviço: [DESCREVA] | Tipo de venda: [TRANSACIONAL/CONSULTIVA] | Ciclo de venda: [CURTO/LONGO] | Principal desafio hoje: [DESCREVA]
+
+Sugira 3 técnicas de venda adequadas a esse contexto (ex: SPIN Selling, venda consultiva, ancoragem de preço), explicando em poucas linhas como aplicar cada uma na prática no meu caso.`},
+{ theme:'vendas', title:'Aumento de Conversão em Vendas', diff:'AVANÇADO', type:'ANÁLISE',
+  desc:'Analisa a taxa de conversão atual e aponta as alavancas mais eficazes para melhorar.',
+  prompt:`Analise minha taxa de conversão de vendas e aponte como melhorar.
+
+Taxa de conversão atual (proposta > venda): [%] | Ticket médio: [VALOR] | Principal motivo de perda que já identifiquei: [DESCREVA OU "NÃO SEI"]
+
+Me diga: 1) se a taxa está dentro do esperado para o meu tipo de venda, 2) as 2 alavancas mais prováveis para aumentar a conversão (preço, urgência, prova social, abordagem), 3) uma ação de teste para as próximas 2 semanas com uma forma simples de medir o resultado.`},
+{ theme:'vendas', title:'Dossiê do Cliente', diff:'AVANÇADO', type:'GERAÇÃO',
+  desc:'Monta um dossiê de prospecção com informações relevantes sobre um cliente antes da abordagem.',
+  prompt:`Monte um dossiê de prospecção sobre o cliente/empresa abaixo antes da minha abordagem.
+
+Nome da empresa/cliente: [NOME] | Setor: [DESCREVA] | O que já sei sobre ele: [DESCREVA O QUE VOCÊ JÁ SABE, SITE, REDES SOCIAIS, ETC.]
+
+Se você tiver acesso à internet, pesquise informações públicas relevantes. Monte o dossiê com: resumo da empresa/pessoa, possíveis dores/necessidades relacionadas ao que vendo, um gancho de abordagem personalizado, e uma pergunta de abertura que mostre que fiz a lição de casa.`},
+{ theme:'vendas', title:'Objeções (Vendas)', diff:'AVANÇADO', type:'FRAMEWORK',
+  desc:'Banco de respostas para as objeções mais comuns de vendas, com simulação de role-play.',
+  prompt:`Atue como especialista em superar objeções de vendas.
+
+Produto/serviço: [DESCREVA] | Preço: [VALOR] | As objeções mais comuns que recebo: [LISTAR DE 3 A 7]
+
+Para cada objeção, me dê: a causa raiz mais provável (preço, confiança, urgência ou necessidade), uma resposta que valida antes de rebater, e uma pergunta que reconduz a conversa para o fechamento. No final, simule um diálogo curto de role-play com a objeção mais difícil da minha lista, mostrando a resposta ideal na prática.`},
+{ theme:'vendas', title:'Recuperação de Vendas Perdidas', diff:'INTERMEDIÁRIO', type:'FRAMEWORK',
+  desc:'Analisa por que uma venda foi perdida e transforma isso em uma segunda chance real, não em insistência.',
+  prompt:`Perdi uma venda e quero entender o que aconteceu e se vale a pena tentar recuperar.
+
+O que foi oferecido: [DESCREVA] | Motivo que o cliente deu para não fechar: [DESCREVA OU "NÃO DEU MOTIVO CLARO"] | Há quanto tempo essa venda esfriou: [TEMPO]
+
+Me ajude a: 1) identificar a causa mais provável da perda (preço, timing, confiança, necessidade não validada), 2) decidir se vale a pena tentar recuperar essa venda ou deixar ir, 3) se valer a pena, uma mensagem de reabordagem que não pareça insistência, 4) o que eu deveria fazer diferente na próxima venda parecida para não perder pelo mesmo motivo.`},
+{ theme:'financeira', title:'Leitura Estratégica de Fluxo de Caixa', diff:'INTERMEDIÁRIO', type:'ANÁLISE',
+  desc:'Traduz números brutos de caixa em leitura estratégica e alertas de risco.',
+  prompt:`Analise meu fluxo de caixa com olhar estratégico, não só contábil.
+
+Entradas: [VALOR] | Saídas: [VALOR] | Saldo inicial: [VALOR] | A receber em aberto: [VALOR] | A pagar (30 dias): [VALOR]
+
+Diga: 1) a real saúde de caixa hoje, 2) se há risco de descasamento nos próximos 30 dias, 3) as 3 alavancas mais rápidas para melhorar o caixa este mês, 4) um alerta se algum número estiver fora do padrão saudável.`},
+{ theme:'financeira', title:'Diagnóstico de Inadimplência', diff:'INTERMEDIÁRIO', type:'ANÁLISE',
+  desc:'Segmenta a inadimplência por faixa de atraso e sugere abordagem de cobrança.',
+  prompt:`Faça um diagnóstico da minha inadimplência e um plano de cobrança.
+
+Total em atraso: [VALOR] | Faixas: 0-30d [VALOR], 31-60d [VALOR], 60d+ [VALOR] | Canais disponíveis: [LISTAR]
+
+Monte: 1) priorização de qual faixa atacar primeiro, 2) tom de abordagem por faixa, 3) mensagem de cobrança para a faixa de maior risco, 4) critério para escalar para negativação/jurídico.`},
+{ theme:'financeira', title:'Plano de Redução de Custos', diff:'AVANÇADO', type:'FRAMEWORK',
+  desc:'Organiza um corte de custos estruturado sem comprometer a operação crítica.',
+  prompt:`Preciso de um plano de redução de custos sem prejudicar a operação.
+
+Meta de redução: [VALOR/%] em [PRAZO] | Principais categorias de custo hoje: [LISTAR COM VALORES] | Áreas intocáveis: [LISTAR]
+
+Classifique custos em cortáveis/renegociáveis/intocáveis, liste ações por categoria com impacto estimado, monte um cronograma de 90 dias e aponte os riscos de cada corte.`},
+{ theme:'financeira', title:'Revisão de Precificação', diff:'AVANÇADO', type:'ANÁLISE',
+  desc:'Cruza custo, margem e concorrência para revisar o preço com segurança.',
+  prompt:`Revise a precificação de um produto/serviço.
+
+Custo unitário: [VALOR] | Margem desejada: [%] | Preço atual: [VALOR] | Faixa da concorrência: [MÍN-MÁX] | Percepção de valor do cliente: [ALTA/MÉDIA/BAIXA]
+
+Diga se o preço atual está compatível com a margem, se há espaço para reajuste, uma forma de comunicar o novo preço, e um risco a monitorar se eu subir o preço.`},
+{ theme:'financeira', title:'Relatório Financeiro para Diretoria', diff:'INTERMEDIÁRIO', type:'GERAÇÃO',
+  desc:'Transforma números soltos em relatório executivo enxuto e direto.',
+  prompt:`Transforme os números abaixo em um relatório executivo para a diretoria.
+
+Receita: [VALOR] (vs [VALOR] período anterior) | Custo: [VALOR] | Margem líquida: [%] | CAC: [VALOR] | LTV: [VALOR]
+
+Gere: resumo executivo em 3 frases, 2 destaques positivos, 2 pontos de atenção com causa provável, 1 recomendação de ação objetiva.`},
+{ theme:'financeira', title:'Modelo de Orçamento Mensal', diff:'BÁSICO', type:'TEMPLATE',
+  desc:'Cria a estrutura de um orçamento mensal simples por categoria.',
+  prompt:`Monte um modelo de orçamento mensal para minha empresa/área.
+
+Receita esperada: [VALOR] | Categorias de custo fixo: [LISTAR] | Categorias de custo variável: [LISTAR] | Meta de lucro: [%]
+
+Estruture uma tabela com categoria, valor previsto, % da receita, e um alerta para categorias que costumam estourar o previsto.`},
+{ theme:'financeira', title:'Analista de Margem Financeiro', diff:'INTERMEDIÁRIO', type:'ANÁLISE',
+  desc:'Faz uma leitura completa da margem do negócio e aponta onde ela está sendo corroída.',
+  prompt:`Atue como analista financeiro. Analise a margem do meu negócio/produto.
+
+Receita: [VALOR] | Custo total (fixo + variável): [VALOR] | Margem bruta atual: [%] | Margem líquida atual: [%]
+Principais categorias de custo: [LISTAR]
+Setor: [DESCREVA]
+
+Me diga: 1) se a margem está saudável para o meu tipo de negócio, 2) qual categoria de custo mais está corroendo a margem, 3) 2 ações práticas para melhorar a margem sem cortar qualidade, 4) um alerta se algum número estiver fora do padrão esperado para o setor.`},
+{ theme:'financeira', title:'Análise Completa da Margem de Contribuição', diff:'AVANÇADO', type:'ANÁLISE',
+  desc:'Calcula a margem de contribuição por produto/serviço e mostra o que realmente vale a pena vender mais.',
+  prompt:`Calcule e analise a margem de contribuição dos meus produtos/serviços.
+
+Para cada produto (preço de venda, custo variável unitário, volume vendido no período): [LISTAR PARA CADA PRODUTO]
+Custos fixos totais do período: [VALOR]
+
+Me entregue: 1) a margem de contribuição unitária e total de cada produto, 2) qual produto contribui mais e qual menos para cobrir os custos fixos, 3) o ponto de equilíbrio (break-even) considerando o mix atual, 4) uma recomendação de quais produtos priorizar nas vendas e quais reavaliar.`},
+{ theme:'financeira', title:'BI Financeiro (Análise do BI)', diff:'INTERMEDIÁRIO', type:'ANÁLISE',
+  desc:'Envia o print do BI financeiro e a IA resume a saúde financeira e aponta 3 oportunidades.',
+  prompt:`Vou anexar um print do meu BI/dashboard financeiro. [ANEXE A IMAGEM]
+
+Contexto: o que esse painel mede: [DESCREVA OS INDICADORES, EX: RECEITA, CUSTO, MARGEM, INADIMPLÊNCIA]
+
+Analise a imagem em detalhe e me diga: 1) um resumo em linguagem simples da saúde financeira atual, 2) os 2 números que mais chamam atenção (positivo ou negativo), 3) 3 oportunidades concretas de ação para o próximo período com base no que o painel mostra.`},
+{ theme:'financeira', title:'Gestão do Custo Tributário', diff:'AVANÇADO', type:'ANÁLISE',
+  desc:'Analisa a carga tributária do negócio e aponta onde pode haver economia legal.',
+  prompt:`Atue como consultor tributário. Analise a carga tributária do meu negócio.
+
+Regime tributário atual: [SIMPLES NACIONAL / LUCRO PRESUMIDO / LUCRO REAL] | Faturamento médio mensal: [VALOR] | Principais impostos pagos hoje: [LISTAR COM VALORES SE SOUBER] | Setor de atuação: [DESCREVA]
+
+Me diga: 1) se o regime tributário atual parece adequado para o meu porte e faturamento, 2) possíveis oportunidades legais de redução de carga tributária (ex: mudança de regime, benefícios fiscais do setor), 3) um alerta sobre o que preciso validar com um contador antes de qualquer mudança, 4) o principal risco de deixar isso sem revisão.
+
+Este framework não substitui a orientação de um contador ou advogado tributarista.`},
+{ theme:'financeira', title:'Precificação de Produto', diff:'INTERMEDIÁRIO', type:'ANÁLISE',
+  desc:'Calcula o preço mínimo, cenários de preço e simulação de faturamento para um produto físico ou digital.',
+  prompt:`Você é uma consultora financeira especializada em produto. Seus princípios: (1) preço sem margem é armadilha — vender muito sem lucro destrói o negócio mais rápido que não vender; (2) custo real inclui tempo, plataforma, devolução e inadimplência — não só o custo do produto; (3) precificação é posicionamento — produto muito barato para o segmento premium perde credibilidade; (4) analise a margem de contribuição.
+
+Nome do produto: [EX: SÉRUM VITAMINA C]
+Custo do produto (CMV): [EX: R$18,00 POR UNIDADE]
+Custo de embalagem: [EX: R$6,50]
+Custo médio de frete por pedido: [EX: R$14,00 — SE VOCÊ ABSORVE PARTE, INFORME]
+Taxa da plataforma de venda: [EX: MERCADO LIVRE 14% / SHOPIFY + GATEWAY 3,5% / INSTAGRAM DIRETO 0%]
+Custo de marketing por venda (CAC estimado): [EX: R$20 POR PEDIDO / NÃO SEI]
+Impostos sobre a receita: [EX: SIMPLES NACIONAL 6% / MEI ISENTO / NÃO SEI]
+Margem de lucro desejada: [EX: 40% DE MARGEM LÍQUIDA]
+Faixa de preço do concorrente direto: [EX: R$60 A R$120 PARA PRODUTOS SIMILARES]
+Posicionamento desejado: [EX: PREMIUM ARTESANAL / CUSTO-BENEFÍCIO / ACESSÍVEL]
+
+Entregue:
+1. Mapeamento de custos completo — tabela com todos os custos por unidade + alertas de custos que você pode estar esquecendo
+2. Cálculo do preço mínimo — o preço abaixo do qual você perde dinheiro, com memória de cálculo
+3. Cenários de preço — tabela com 3 cenários (conservador, recomendado, premium): preço sugerido, margem resultante, viabilidade e posicionamento
+4. Recomendação final — preço sugerido com justificativa considerando custos, margem e mercado
+5. Simulação de faturamento — vendendo 30, 60 e 100 unidades/mês, qual o faturamento e lucro estimado`},
+{ theme:'financeira', title:'Planilha de Custos e Precificação (Projetos e Serviços)', diff:'AVANÇADO', type:'TEMPLATE',
+  desc:'Monta a estrutura de uma planilha de custos completa para projetos com equipamentos, mão de obra e impostos.',
+  prompt:`Você é um especialista em finanças e precificação para empresas prestadoras de serviço. Seus princípios: (1) custo real tem que levar em conta a hora de trabalho dedicada ao projeto, (2) margem de lucro deve ser calculada sobre o preço de venda, não sobre o custo — confundir os dois é o erro mais comum em precificação, (3) mão de obra deve ter custo real calculado com encargos, não só o salário líquido, (4) imposto varia conforme regime tributário e impacta diretamente o preço mínimo.
+
+Tipo de projeto: [EX: SISTEMA DE CFTV + CONTROLE DE ACESSO]
+Lista de equipamentos com custo de compra: [EX: 20 CÂMERAS A R$480, 1 NVR A R$1.200, CABOS E ACESSÓRIOS R$2.000]
+Horas estimadas de mão de obra: [EX: 80 HORAS DE TÉCNICO A R$45/HORA]
+Regime tributário da empresa: [EX: SIMPLES NACIONAL / LUCRO PRESUMIDO]
+Margem de lucro desejada: [EX: 25% SOBRE O PREÇO DE VENDA]
+Prazo de pagamento do cliente: [EX: 30% ENTRADA + 70% NA ENTREGA]
+Custo de deslocamento e logística: [EX: R$800]
+
+Entregue:
+1. Estrutura da planilha de custos (linha por linha) — descrição, como calcular e exemplo para: custo direto de equipamentos, mão de obra real, logística, overhead (% sobre custo), impostos (% sobre preço de venda), margem desejada, preço mínimo e preço de venda sugerido
+2. Simulação com os dados informados — custo total direto, custo com overhead, impostos, preço mínimo (break-even), preço com margem desejada, margem de contribuição em R$ e %, faixa de desconto máximo possível sem prejuízo
+3. Tabela de preços por categoria para a proposta — versão resumida agrupando itens por categoria
+4. Alerta de riscos financeiros — principais riscos que podem corroer a margem nesse tipo de projeto e como proteger cada um contratualmente`},
+{ theme:'financeira', title:'Precificação de Serviços de Consultoria', diff:'AVANÇADO', type:'ANÁLISE',
+  desc:'Calcula o custo-hora real e monta pacotes de preço para serviços de consultoria.',
+  prompt:`Você é um especialista em precificação de serviços profissionais e consultoria. Seus princípios: (1) preço baseado em custo é o mínimo, não o objetivo — o teto é o valor percebido pelo cliente; (2) hora produtiva é menor que hora trabalhada — nunca divida faturamento desejado pelas horas totais; (3) overhead é invisível mas devora margem — inclua tudo: sistema, contador, imposto, tempo de venda; (4) pacotes vendem mais que hora — precificação por pacote aumenta ticket e reduz atrito.
+
+Horas mensais disponíveis para trabalho: [EX: 160H/MÊS]
+% de horas produtivas (billable): [EX: 60% — O RESTO É VENDA, ADMIN, CAPACITAÇÃO]
+Custos fixos mensais: [EX: CONTADOR R$800, SISTEMAS R$500, ALUGUEL R$1.200, TELEFONE/INTERNET R$200]
+Pró-labore ou salário desejado: [VALOR/MÊS]
+Impostos sobre faturamento: [EX: SIMPLES NACIONAL 6% / ISS 5%]
+Margem líquida desejada sobre faturamento: [EX: 25%]
+Serviços que oferece: [LISTE COM ESTIMATIVA DE HORAS MENSAIS POR CLIENTE]
+Posicionamento desejado: [EX: MID-MARKET / PREMIUM / ACESSÍVEL PARA PEQUENAS EMPRESAS]
+Referência de mercado (se souber): [O QUE A CONCORRÊNCIA COBRA OU O QUE SEUS CLIENTES PAGAM HOJE]
+
+Entregue:
+1. Custo hora real — (custos fixos + pró-labore + impostos) ÷ horas produtivas mensais = custo hora mínimo
+2. Preço mínimo por serviço — tabela: serviço / horas por mês / custo mínimo / preço com margem desejada
+3. Sugestão de tabela de pacotes — 3 pacotes (básico, intermediário, completo) com o que inclui, horas estimadas, preço e margem
+4. Análise de viabilidade da carteira atual — se informado o faturamento atual, verificar se os preços cobrados estão acima do custo hora real
+5. Argumento de valor para justificar o preço — 3 bullets por pacote, em linguagem de benefício, não de tarefa`},
+{ theme:'financeira', title:'Precificação Estratégica de Projetos de Branding', diff:'INTERMEDIÁRIO', type:'FRAMEWORK',
+  desc:'Estrutura pacotes de preço por valor (não por hora) para serviços criativos como branding e design.',
+  prompt:`Você é um consultor de negócios especializado em precificação para criativos e designers de branding. Seus princípios: (1) designer que cobra por hora vende tempo — designer que cobra por valor vende resultado: a diferença é o posicionamento, (2) pacote bem construído vende mais do que serviço avulso — o cliente sente segurança no que está comprando, (3) preço baixo não atrai cliente bom — cliente que pechincha muito tem mais problema que dinheiro, (4) subir o preço não é arrogância — é sinal de que você entende o que entrega.
+
+Serviços que ofereço: [LISTE O QUE FAZ — LOGO, BRANDING, UI, ETC.]
+Como precifica hoje: [POR HORA / POR PROJETO / POR PACOTE / MISTO]
+Faixa atual de preço: [QUANTO COBRA HOJE POR PROJETO MÉDIO]
+Tempo médio por projeto: [HORAS OU SEMANAS DE DEDICAÇÃO]
+Perfil de cliente que atende: [EX: PME / PROFISSIONAL LIBERAL / STARTUP / AGÊNCIA]
+Localização e mercado: [ONDE ATUA]
+Meta de faturamento mensal: [VALOR DESEJADO]
+Quantos projetos simultâneos consegue fazer: [CAPACIDADE PRODUTIVA]
+O que mais te diferencia: [PARA CALIBRAR POSICIONAMENTO DE PREÇO]
+
+Entregue:
+1. Diagnóstico da precificação atual — está cobrando mais, menos ou adequado ao seu posicionamento? Impacto no faturamento
+2. Modelagem de pacotes — 3 pacotes (Essencial, Profissional, Premium): o que inclui, o que não inclui, prazo, preço e para quem se destina
+3. Tabela de serviços avulsos — preço de referência para logo avulsa, revisão extra, aplicação adicional, urgência
+4. Simulação de faturamento — com os preços sugeridos e sua capacidade produtiva, quanto você poderia faturar por mês
+5. Script para aumentar preço com cliente recorrente — como comunicar o reajuste sem perder o relacionamento`},
+{ theme:'financeira', title:'Pesquisa de Concorrentes (Preço e Posicionamento)', diff:'INTERMEDIÁRIO', type:'ANÁLISE',
+  desc:'Mapeia o posicionamento de preço e comunicação dos concorrentes para encontrar espaço de diferenciação.',
+  prompt:`Você é um analista de marketing e posicionamento especializado no meu produto ou serviço. Seus princípios: (1) diferenciação não precisa ser no produto — pode ser na comunicação, no público escolhido ou na experiência de compra, (2) o melhor posicionamento é um que o concorrente não pode copiar facilmente, (3) analisar concorrente não é para copiá-lo — é para encontrar o que ele não está fazendo, (4) nicho específico bate mercado amplo.
+
+Produto que você vende: [NOME E DESCRIÇÃO]
+Seu preço atual: [VALOR]
+Seu público atual ou desejado: [QUEM COMPRA OU QUER QUE COMPRE]
+Concorrente 1 (nome/loja, preço, como se comunicam, ponto forte, ponto fraco): [DESCREVA]
+Concorrente 2 (mesmos campos): [DESCREVA]
+Concorrente 3 (mesmos campos): [DESCREVA]
+O que você tem de diferente (mesmo que pequeno): [EX: ATENDIMENTO MAIS RÁPIDO, EMBALAGEM MELHOR, ESTOQUE LOCAL, GARANTIA DIFERENTE, ESPECIALIZAÇÃO EM UM NICHO]
+
+Entregue:
+1. Mapa do posicionamento atual do mercado — como os concorrentes estão posicionados em 2 eixos: preço (baixo-alto) e promessa (funcional-emocional)
+2. Gaps e oportunidades identificados — o que ninguém está fazendo ou comunicando
+3. Posicionamento recomendado — como você deve se posicionar, para quem e com qual promessa central
+4. Frase de posicionamento — 1 frase que captura sua diferenciação em 3 segundos
+5. Ajustes de comunicação — o que mudar nos anúncios, nas páginas de produto e no perfil
+6. Público mais lucrativo a priorizar — o segmento com menor concorrência e maior disposição a pagar`},
+{ theme:'financeira', title:'Shopping (Shopper) de Preço', diff:'AVANÇADO', type:'ANÁLISE',
+  desc:'Faz um shopping de preços completo de um produto ou serviço, comparando lojas, reputação, riscos e custo-benefício antes de comprar.',
+  prompt:`Você é expert em pesquisa de preço. Sua função é atuar como especialista em pesquisa de preços, comparação de ofertas, reputação de lojas e análise de custo-benefício de produtos e serviços.
+
+REGRA OBRIGATÓRIA ANTES DE QUALQUER BUSCA: pergunte apenas "Qual produto ou serviço você deseja pesquisar?". Não faça nenhuma busca antes de receber essa resposta. Se o usuário informar um nome genérico (ex: "celular", "notebook"), faça no máximo uma pergunta complementar objetiva quando indispensável (modelo, versão, capacidade, cidade/região, condição nova ou usada). Depois de receber a resposta, envie apenas "Recebido" e execute imediatamente toda a pesquisa.
+
+Analise, considerando: preço anunciado, preço final, frete, taxas, descontos, formas de pagamento, parcelamento, prazo de entrega, disponibilidade, reputação da empresa, avaliações de compradores, reclamações, garantia, política de troca, custo-benefício e confiabilidade da oferta.
+
+Use informações atuais e verificáveis. Registre a data da consulta. Não invente preços, links, avaliações, reclamações ou condições comerciais — quando uma informação não estiver disponível, escreva "Informação não localizada". Se uma oferta parecer desatualizada, indisponível ou suspeita, sinalize isso. Não considere apenas o menor preço — avalie também reputação, segurança, garantia e custo total.
+
+Pesquise em marketplaces relevantes, lojas oficiais, comparadores de preço, buscadores, fóruns/reviews e no Reclame Aqui (nota geral, índice de respostas e soluções, reclamações recorrentes, diferenciando a reputação do marketplace da do vendedor específico).
+
+Verifique sinais de risco: preço muito abaixo da média, ausência de CNPJ/endereço, loja recém-criada, pagamento apenas por PIX, vendedor sem histórico, avaliações artificiais, reclamações de não entrega. Use expressões cautelosas ("sinal de risco", "não foi possível confirmar") em vez de acusações diretas.
+
+Entregue: 1) resumo da pesquisa, 2) critérios utilizados e data da consulta, 3) faixa de preço encontrada e preço médio, 4) menor preço confirmado, 5) melhor custo-benefício, 6) oferta mais segura, 7) melhor opção à vista e melhor parcelada, 8) tabela completa (posição, produto, preço à vista, preço parcelado, frete, taxas, preço final, loja, vendedor, disponibilidade, garantia, reputação, data, link, observações), 9) análise individual das ofertas relevantes, 10) classificação de cada oferta (altamente recomendada / recomendada / aceitável com ressalvas / arriscada / não recomendada / não confirmada), 11) checklist antes da compra, 12) recomendação final fundamentada — não escolha apenas pelo menor preço.
+
+Ao final, informe: quantas ofertas foram pesquisadas, quantas confirmadas, faixa de preço, melhor opção, principal risco, data da pesquisa e recomendação prática. Não finalize com perguntas abertas.`},
+{ theme:'financeira', title:'Separação de Finanças Pessoais e da Empresa', diff:'BÁSICO', type:'FRAMEWORK',
+  desc:'Ataca um dos erros financeiros mais comuns entre donos de pequenos negócios no Brasil — misturar conta pessoal com a da empresa.',
+  prompt:`Pesquisas do setor mostram que a maioria dos donos de pequenos negócios no Brasil ainda paga despesas da empresa com a conta pessoal, e vice-versa. Me ajude a organizar isso.
+
+Situação atual: [DESCREVA COMO VOCÊ MISTURA HOJE, EX: PAGO TUDO NA MESMA CONTA] | Faturamento médio mensal: [VALOR] | Já tenho pró-labore definido: [SIM/NÃO]
+
+Monte um plano prático de separação: 1) os primeiros passos para abrir/organizar uma conta PJ separada, 2) como definir um pró-labore justo com base no meu faturamento, 3) uma rotina simples de transferência entre PJ e pessoa física, 4) os riscos de continuar misturando (fiscais e de gestão), explicados sem jargão contábil.`},
+{ theme:'financeira', title:'Diagnóstico de Preparação para Crédito/Empréstimo', diff:'AVANÇADO', type:'ANÁLISE',
+  desc:'Avalia se o seu negócio está preparado para buscar crédito e o que ajustar antes de ir ao banco.',
+  prompt:`Estou pensando em buscar crédito/empréstimo para o negócio e quero saber se estou preparado.
+
+Motivo do crédito: [EX: CAPITAL DE GIRO, INVESTIMENTO, EXPANSÃO] | Faturamento dos últimos meses: [DESCREVA] | Situação de dívidas atuais: [DESCREVA] | Documentação que já tenho organizada: [DESCREVA]
+
+Me diga: 1) se o motivo do crédito é saudável ou um sinal de alerta (ex: pegar empréstimo para pagar outra dívida), 2) o que bancos e fintechs normalmente exigem para esse tipo de crédito, 3) o que eu preciso organizar antes de solicitar para aumentar minha chance de aprovação e taxa melhor, 4) perguntas que eu deveria fazer para comparar propostas de crédito diferentes.`},
+{ theme:'financeira', title:'Plano de Redução de Inadimplência Recorrente', diff:'AVANÇADO', type:'FRAMEWORK',
+  desc:'Vai além da cobrança pontual e ataca a causa estrutural de uma inadimplência que se repete mês após mês.',
+  prompt:`Minha inadimplência é recorrente, não é um problema pontual. Me ajude a atacar a causa, não só cobrar.
+
+% de inadimplência nos últimos meses: [DESCREVA A TENDÊNCIA] | Perfil de cliente mais inadimplente: [DESCREVA] | Política de crédito/pagamento atual: [DESCREVA OU "NÃO TENHO UMA POLÍTICA CLARA"]
+
+Analise e me entregue: 1) se o problema está na concessão de crédito (aceito cliente demais sem critério) ou na cobrança, 2) uma política de crédito simples para reduzir o risco na entrada de novos clientes, 3) um ajuste na forma de pagamento que reduza o risco (ex: entrada maior, prazo menor), 4) um plano de 90 dias para reduzir a inadimplência recorrente com meta numérica.`},
+{ theme:'financeira', title:'Simulador de Cenários Financeiros', diff:'AVANÇADO', type:'ANÁLISE',
+  desc:'Simula 3 cenários financeiros (otimista, realista, pessimista) para os próximos meses, ajudando a se preparar antes de o problema aparecer.',
+  prompt:`Quero simular como ficam minhas finanças nos próximos meses em diferentes cenários.
+
+Receita média mensal atual: [VALOR] | Custo fixo mensal: [VALOR] | Fatores que podem mudar (sazonalidade, novo cliente grande, perda de cliente, aumento de custo): [DESCREVA]
+
+Monte 3 cenários para os próximos [PERÍODO]: 1) Otimista — o que teria que acontecer e qual seria o resultado financeiro, 2) Realista — a projeção mais provável mantendo o ritmo atual, 3) Pessimista — o que aconteceria se as coisas piorarem, e a partir de qual ponto isso vira risco real para o negócio. Para cada cenário, aponte 1 ação preventiva que eu deveria preparar desde já.`},
+{ theme:'planilha', title:'Leitura de Indicadores de uma Planilha', diff:'BÁSICO', type:'ANÁLISE',
+  desc:'Transforma uma planilha de números em uma leitura simples do que está bom e do que não está.',
+  prompt:`Vou colar os dados de uma planilha (ou descrever as colunas e valores principais). Analise e me diga em linguagem simples:
+
+Dados: [COLE OS DADOS OU DESCREVA AS COLUNAS E VALORES]
+
+1) O que está indo bem, 2) o que está fora do esperado, 3) uma pergunta que eu deveria estar me fazendo sobre esses números.`},
+{ theme:'planilha', title:'Identificação de Tendências em Dados de Vendas', diff:'INTERMEDIÁRIO', type:'ANÁLISE',
+  desc:'Aponta tendências de crescimento, queda ou sazonalidade em uma série de dados.',
+  prompt:`Analise a série de dados de vendas abaixo e identifique tendências.
+
+Dados por período: [COLE OS NÚMEROS MÊS A MÊS OU SEMANA A SEMANA]
+
+Diga: 1) a tendência geral (crescimento, queda, estável), 2) se há sazonalidade e em qual período, 3) o mês/semana fora do padrão e possível causa, 4) uma projeção simples para o próximo período.`},
+{ theme:'planilha', title:'Resumo Executivo a partir de Planilha Bruta', diff:'INTERMEDIÁRIO', type:'GERAÇÃO',
+  desc:'Converte uma planilha cheia de números em um resumo de 5 linhas para decisão rápida.',
+  prompt:`Transforme os dados abaixo em um resumo executivo de no máximo 5 linhas, sem jargão técnico.
+
+Dados: [COLE OS DADOS OU DESCREVA]
+Público que vai ler: [DIRETORIA/EQUIPE/CLIENTE]
+
+O resumo deve responder: o que aconteceu, por que importa, e o que fazer a respeito.`},
+{ theme:'planilha', title:'Detecção de Inconsistências em Planilha', diff:'AVANÇADO', type:'ANÁLISE',
+  desc:'Encontra números que não batem, duplicidades ou padrões suspeitos em uma base de dados.',
+  prompt:`Analise os dados abaixo em busca de inconsistências, duplicidades ou números fora do padrão.
+
+Dados: [COLE OS DADOS OU DESCREVA A ESTRUTURA DAS COLUNAS]
+Contexto do que os números deveriam representar: [DESCREVA]
+
+Aponte: 1) valores que parecem errados ou duplicados, 2) por que são suspeitos, 3) o que eu deveria checar manualmente antes de confiar nesses dados.`},
+{ theme:'planilha', title:'Comparativo de Períodos (Mês a Mês)', diff:'INTERMEDIÁRIO', type:'ANÁLISE',
+  desc:'Compara dois ou mais períodos e explica o que mudou e por quê.',
+  prompt:`Compare os dois períodos abaixo e explique as diferenças.
+
+Período A ([NOME/DATA]): [DADOS] | Período B ([NOME/DATA]): [DADOS]
+
+Diga: 1) as maiores variações (em número e em %), 2) uma hipótese para cada variação relevante, 3) se a mudança é positiva ou negativa para o negócio, 4) uma ação recomendada.`},
+{ theme:'planilha', title:'Dashboard de Texto a partir de Números', diff:'BÁSICO', type:'GERAÇÃO',
+  desc:'Transforma uma lista de indicadores soltos em um painel textual organizado.',
+  prompt:`Organize os indicadores abaixo em um painel de texto, tipo dashboard, fácil de ler.
+
+Indicadores: [LISTAR NOME E VALOR DE CADA UM]
+
+Agrupe por tema (ex: vendas, financeiro, operação), destaque os 2 números mais importantes do período, e sinalize com ✅/⚠️/🔴 os que estão bem, em atenção, ou críticos.`},
+{ theme:'planilha', title:'Análise do BI', diff:'INTERMEDIÁRIO', type:'ANÁLISE',
+  desc:'Envia o print do seu BI/dashboard e a IA resume o que está bom, o que não está, e aponta oportunidades — para qualquer área do negócio.',
+  prompt:`Vou anexar um print do meu BI/dashboard. [ANEXE A IMAGEM]
+
+Área do negócio que esse painel representa: [EX: COMERCIAL, FINANCEIRO, OPERACIONAL, RH] | O que esse painel mede: [DESCREVA OS INDICADORES]
+
+Analise a imagem em detalhe e me diga: 1) um resumo em linguagem simples do que está bom e do que não está, 2) os 2-3 números que mais chamam atenção (positivos ou negativos), 3) hipóteses para os números fora do padrão, 4) 3 oportunidades concretas de ação para essa semana com base no que o painel mostra.`},
+{ theme:'planilha', title:'Criação de um Dashboard a partir de uma Planilha', diff:'INTERMEDIÁRIO', type:'GERAÇÃO',
+  desc:'Transforma dados brutos de uma planilha em um painel de indicadores organizado e fácil de acompanhar.',
+  prompt:`Vou colar/descrever os dados da minha planilha. [COLE OS DADOS OU DESCREVA AS COLUNAS E VALORES]
+
+Objetivo do dashboard: [EX: ACOMPANHAR VENDAS, CUSTOS, PRODUTIVIDADE] | Quem vai usar esse dashboard: [VOCÊ/EQUIPE/DIRETORIA] | Frequência de atualização: [DIÁRIA/SEMANAL/MENSAL]
+
+Organize um dashboard de texto com: 1) os indicadores principais agrupados por tema, 2) para cada indicador, o valor atual e uma sinalização de status (✅/⚠️/🔴), 3) os 2 destaques da leitura atual (um positivo e um negativo), 4) uma sugestão de qual tipo de gráfico usar para cada bloco de dados, caso você vá montar isso no Excel, Google Sheets ou Power BI.`},
+{ theme:'planilha', title:'Criação Especial de Planilha', diff:'AVANÇADO', type:'TEMPLATE',
+  desc:'Monta a estrutura completa de uma planilha personalizada — colunas, fórmulas e lógica — para um controle específico que você precisa.',
+  prompt:`Preciso estruturar uma planilha para controlar: [DESCREVA O QUE VOCÊ QUER CONTROLAR — EX: FLUXO DE CAIXA, ESTOQUE, PRODUTIVIDADE DA EQUIPE, CONTROLE DE CLIENTES]
+
+Informações que preciso registrar: [LISTAR OS CAMPOS/DADOS NECESSÁRIOS] | Quem vai preencher: [VOCÊ/EQUIPE] | O que precisa ser calculado automaticamente: [DESCREVA, EX: TOTAL, MÉDIA, % DE ATINGIMENTO]
+
+Monte a estrutura completa da planilha: 1) lista de colunas em ordem, com o tipo de dado de cada uma (texto, número, data, fórmula), 2) as fórmulas necessárias para os cálculos automáticos, explicadas em linguagem simples, 3) sugestão de formatação condicional útil (ex: destacar atrasados em vermelho), 4) uma aba extra de resumo/dashboard, se fizer sentido para esse controle.`},
+{ theme:'planilha', title:'Transforme a Planilha em um Plano de Ação', diff:'INTERMEDIÁRIO', type:'FRAMEWORK',
+  desc:'Pega os números de uma planilha e converte direto em um plano de ação prático, com responsável e prazo.',
+  prompt:`Vou colar os dados da minha planilha. [COLE OS DADOS OU DESCREVA OS NÚMEROS PRINCIPAIS]
+
+Contexto: o que esses números representam: [DESCREVA] | Objetivo que eu quero alcançar: [DESCREVA]
+
+Analise os dados e transforme em um plano de ação: 1) os 3 principais problemas ou oportunidades que os números revelam, 2) para cada um, uma ação prática e específica (não genérica), 3) um responsável sugerido e um prazo realista para cada ação, 4) um indicador para saber se a ação funcionou.`},
+{ theme:'planilha', title:'Projeção de Cenários a partir da Planilha', diff:'AVANÇADO', type:'ANÁLISE',
+  desc:'Usa os dados históricos de uma planilha para projetar os próximos meses em diferentes cenários.',
+  prompt:`Vou colar os dados históricos da minha planilha. [COLE OS DADOS DOS ÚLTIMOS MESES]
+
+O que eu quero projetar: [EX: RECEITA, CUSTO, VENDAS] | Horizonte de projeção: [MESES]
+
+Analise a tendência histórica e projete: 1) um cenário conservador, 2) um cenário provável, 3) um cenário otimista, explicando a lógica usada em cada um. Aponte também se algum mês do histórico parece uma exceção que não deveria influenciar a projeção, como um pico sazonal único.`},
+{ theme:'contratacao', title:'Redação de Vaga que Atrai o Perfil Certo', diff:'BÁSICO', type:'GERAÇÃO',
+  desc:'Escreve o anúncio da vaga para atrair candidatos alinhados, não qualquer candidato.',
+  prompt:`Escreva um anúncio de vaga atrativo e específico.
+
+Cargo: [CARGO] | Principais responsabilidades: [LISTAR] | Perfil comportamental desejado: [DESCREVA] | Faixa salarial (se for divulgar): [VALOR]
+
+O anúncio deve: filtrar quem não tem o perfil (sem ser excludente demais), destacar o que torna a vaga interessante, e ter uma chamada clara de como se candidatar.`},
+{ theme:'contratacao', title:'Roteiro de Triagem de Currículos', diff:'BÁSICO', type:'FRAMEWORK',
+  desc:'Cria critérios objetivos para triar currículos rapidamente sem perder bons candidatos.',
+  prompt:`Crie um roteiro de triagem de currículos para a vaga abaixo.
+
+Cargo: [CARGO] | Requisitos obrigatórios: [LISTAR] | Requisitos desejáveis (não eliminatórios): [LISTAR]
+
+Monte: 1) uma checklist de eliminação rápida (o que descarta de cara), 2) 3 critérios de priorização entre os aprovados, 3) um sinal de alerta no currículo que merece atenção na entrevista.`},
+{ theme:'contratacao', title:'Roteiro de Entrevista Comportamental', diff:'INTERMEDIÁRIO', type:'FRAMEWORK',
+  desc:'Estrutura perguntas comportamentais para prever como o candidato age no dia a dia.',
+  prompt:`Monte um roteiro de entrevista comportamental para o cargo abaixo.
+
+Cargo: [CARGO] | Competências-chave que preciso avaliar: [LISTAR, EX: LIDERANÇA, RESILIÊNCIA, ORGANIZAÇÃO]
+
+Para cada competência, crie 1 pergunta baseada em situação real vivida ("me conte uma vez que...") e o que uma boa resposta deveria conter.`},
+{ theme:'contratacao', title:'Perguntas Técnicas por Cargo', diff:'INTERMEDIÁRIO', type:'TEMPLATE',
+  desc:'Gera um banco de perguntas técnicas específicas para validar conhecimento prático.',
+  prompt:`Crie 8 perguntas técnicas para avaliar um candidato à vaga de [CARGO].
+
+Nível de senioridade: [JÚNIOR/PLENO/SÊNIOR] | Ferramentas/processos que a pessoa vai usar no dia a dia: [LISTAR]
+
+As perguntas devem misturar teoria e situação prática ("o que você faria se..."), e para cada uma, indique o que diferencia uma resposta fraca de uma resposta forte.`},
+{ theme:'contratacao', title:'Comparativo entre Candidatos Finalistas', diff:'AVANÇADO', type:'ANÁLISE',
+  desc:'Cruza as anotações de entrevista de 2 ou mais candidatos para embasar a decisão final.',
+  prompt:`Compare os candidatos finalistas abaixo para me ajudar a decidir.
+
+Vaga: [CARGO] | Critérios mais importantes para essa posição: [LISTAR]
+
+Candidato A: [RESUMO DA ENTREVISTA/IMPRESSÕES]
+Candidato B: [RESUMO DA ENTREVISTA/IMPRESSÕES]
+
+Monte uma comparação lado a lado por critério, aponte o risco de cada escolha, e recomende qual parece mais aderente, com ressalvas.`},
+{ theme:'contratacao', title:'Plano de Onboarding de 30 Dias', diff:'BÁSICO', type:'FRAMEWORK',
+  desc:'Reduz o tempo de rampa de um novo colaborador com um plano estruturado.',
+  prompt:`Crie um plano de onboarding de 30 dias.
+
+Cargo: [CARGO] | Time: [ÁREA] | Principal entregável esperado em 30 dias: [DESCREVA]
+
+Estruture: semana 1 (contexto e integração), semana 2 (primeiras entregas acompanhadas), semanas 3-4 (autonomia crescente), 5 perguntas para o check-in de 30 dias, e sinais de alerta de que o onboarding não está funcionando.`},
+{ theme:'contratacao', title:'Criação de Job Description', diff:'BÁSICO', type:'TEMPLATE',
+  desc:'Gera a descrição completa de uma vaga (JD), pronta para publicar, no padrão usado pelo Instituto Isaac Martins.',
+  prompt:`Crie a descrição completa de uma vaga (job description) no formato pronto para publicar.
+
+Cargo: [NOME DA VAGA] | Tipo de posição: [EX: SDR, VENDEDOR, ANALISTA, ETC.] | Horário de trabalho: [DESCREVA] | Remuneração: [SALÁRIO + BENEFÍCIOS + BONIFICAÇÃO, SE HOUVER] | Principais atividades do dia a dia: [DESCREVA]
+
+Gere a descrição estruturada com os campos:
+1. Descrição — resumo de 1-2 frases sobre o que o profissional vai fazer e o principal atrativo da vaga (ex: possibilidade de bonificação)
+2. Horário de trabalho — carga horária e horário
+3. Remuneração — salário + benefícios + bonificação, se houver, deixando claro o critério de bonificação
+4. Atividades — lista detalhada e realista do que a pessoa vai executar no dia a dia
+5. Pré-requisitos / Habilidades — o que é obrigatório o candidato já ter/saber
+6. Desejável — o que é diferencial, mas não elimina o candidato se não tiver
+7. Formação — nível de escolaridade e áreas de formação aceitas`},
+{ theme:'contratacao', title:'Descrição do Cargo', diff:'INTERMEDIÁRIO', type:'TEMPLATE',
+  desc:'Gera a descrição formal de um cargo no padrão de RH: macroatividades, competências de processo, perfil e competências evolutivas.',
+  prompt:`Crie a descrição completa de um cargo no padrão de RH (documento formal de descrição de cargo).
+
+Cargo: [NOME DO CARGO] | Área: [ÁREA] | Diretoria: [DIRETORIA] | Cargo do superior imediato: [CARGO] | Processo/subprocesso principal: [DESCREVA O QUE O CARGO EXECUTA NO DIA A DIA] | Competências de processo necessárias: [DESCREVA]
+
+Gere a descrição de cargo estruturada com os blocos:
+1. Identificação — cargo, área, diretoria, cargo do superior imediato
+2. Processos e subprocessos — em qual processo da empresa esse cargo atua
+3. Competências de processo — o que é indispensável para executar bem essa função
+4. Macroatividades — visão geral, em 2-3 frases, do que o cargo entrega para a empresa
+5. Descrição das atividades do cargo — lista detalhada de todas as atividades executadas
+6. Perfil do cargo — educação mínima exigida, experiência desejada, requisitos específicos
+7. Competências evolutivas — separadas em Conhecimentos (o que precisa saber), Habilidades (o que precisa saber fazer) e Atitudes (comportamentos esperados)`},
+{ theme:'contratacao', title:'Teste de Predominância Cerebral (Interpretação de Perfil)', diff:'AVANÇADO', type:'ANÁLISE',
+  desc:'Interpreta o resultado de um teste de dominância cerebral (4 quadrantes) e traduz em recomendações práticas de encaixe e gestão.',
+  prompt:`Você é um especialista em análise comportamental e testes de dominância/predominância cerebral (modelo de 4 quadrantes: analítico, organizador, comunicador/relacional e criativo/estratégico — também chamados de cortical esquerdo, límbico esquerdo, límbico direito e cortical direito).
+
+Cole abaixo o resultado bruto (pontuação por quadrante) do teste de predominância cerebral já aplicado ao candidato/colaborador: [COLE AS PONTUAÇÕES OU RESPOSTAS DO TESTE]
+
+Cargo/vaga para o qual está sendo avaliado: [DESCREVA] | Principais exigências comportamentais do cargo: [EX: PRECISA SER ORGANIZADO, PRECISA LIDAR BEM COM PESSOAS, PRECISA SER ANALÍTICO, ETC.]
+
+Com base na pontuação, entregue:
+1. Perfil predominante — qual(is) quadrante(s) se destacam e o que isso significa na prática de trabalho
+2. Se o perfil tende mais ao lado "pensante" (analítico/organizador) ou "atuante" (comunicador/criativo), e o que isso implica no dia a dia
+3. Pontos fortes desse perfil para o cargo avaliado
+4. Pontos de atenção/possíveis dificuldades desse perfil para o cargo avaliado
+5. Recomendações práticas de gestão — como liderar, dar feedback e se comunicar melhor com essa pessoa
+6. Um parecer objetivo: o perfil tem boa aderência ao cargo, aderência parcial (com ressalvas), ou baixa aderência, e por quê
+
+Este teste é uma ferramenta de apoio à decisão — não deve ser o único critério de contratação.`},
+{ theme:'contratacao', title:'Teste de MBTI (Interpretação de Perfil)', diff:'INTERMEDIÁRIO', type:'ANÁLISE',
+  desc:'Interpreta o resultado de um teste MBTI de um candidato/colaborador e traduz em recomendações práticas para a vaga.',
+  prompt:`Você é um especialista em análise comportamental e no modelo MBTI (Myers-Briggs Type Indicator).
+
+Cole abaixo o resultado do teste MBTI do candidato/colaborador: [COLE O TIPO IDENTIFICADO, EX: "ISTJ", OU AS RESPOSTAS]
+
+Cargo/vaga para o qual está sendo avaliado: [DESCREVA] | Principais exigências comportamentais do cargo: [DESCREVA]
+
+Com base no tipo identificado, entregue:
+1. Resumo do perfil em linguagem simples, sem jargão técnico do MBTI
+2. Pontos fortes desse perfil para o cargo avaliado
+3. Pontos de atenção/possíveis dificuldades desse perfil para o cargo avaliado
+4. Como esse perfil tende a se comportar em situações de pressão, mudança e trabalho em equipe
+5. Recomendações práticas de gestão — como liderar, motivar e dar feedback para essa pessoa
+6. Um parecer objetivo sobre a aderência ao cargo, com ressalvas se houver
+
+Este teste é uma ferramenta de apoio à decisão — não deve ser o único critério de contratação.`},
+{ theme:'contratacao', title:'Teste de DISC (Interpretação de Perfil)', diff:'INTERMEDIÁRIO', type:'ANÁLISE',
+  desc:'Interpreta o resultado de um teste DISC de um candidato/colaborador e traduz em recomendações práticas para a vaga.',
+  prompt:`Você é um especialista em análise comportamental e no modelo DISC (Dominância, Influência, Estabilidade, Conformidade).
+
+Cole abaixo o resultado do teste DISC do candidato/colaborador: [COLE AS PORCENTAGENS OU O PERFIL PREDOMINANTE IDENTIFICADO]
+
+Cargo/vaga para o qual está sendo avaliado: [DESCREVA] | Principais exigências comportamentais do cargo: [DESCREVA]
+
+Com base no perfil identificado, entregue:
+1. Resumo do perfil predominante e secundário (se houver), em linguagem simples
+2. Pontos fortes desse perfil para o cargo avaliado
+3. Pontos de atenção/possíveis dificuldades desse perfil para o cargo avaliado
+4. Como esse perfil tende a se comportar em vendas, negociação, trabalho em equipe e sob pressão (ajuste conforme o cargo)
+5. Recomendações práticas de gestão — como liderar, motivar, dar feedback e se comunicar melhor com essa pessoa
+6. Um parecer objetivo sobre a aderência ao cargo, com ressalvas se houver
+
+Este teste é uma ferramenta de apoio à decisão — não deve ser o único critério de contratação.`},
+{ theme:'contratacao', title:'Criação de Teste de Aptidão para o Cargo', diff:'INTERMEDIÁRIO', type:'GERAÇÃO',
+  desc:'Cria um teste prático para avaliar se o candidato realmente sabe executar as tarefas do cargo, além da entrevista.',
+  prompt:`Crie um teste de aptidão prático para avaliar se o candidato realmente sabe executar as tarefas do cargo, sem depender só de entrevista.
+
+Cargo: [CARGO] | Principais tarefas que a pessoa vai executar no dia a dia: [LISTAR] | Nível de senioridade: [JÚNIOR/PLENO/SÊNIOR] | Tempo disponível para aplicar o teste: [MINUTOS]
+
+Crie um teste de aptidão com:
+1. De 3 a 5 exercícios práticos que simulam situações reais do cargo, não perguntas teóricas
+2. Para cada exercício: o que o candidato deve fazer, o tempo sugerido, e o que evidencia uma boa resposta versus uma resposta fraca
+3. Um critério objetivo de pontuação — o que aprova, o que reprova, o que fica em dúvida
+4. Uma orientação de como aplicar o teste sem deixar o candidato constrangido ou nervoso demais`},
+{ theme:'contratacao', title:'Plano de Atração de Talentos Qualificados', diff:'AVANÇADO', type:'FRAMEWORK',
+  desc:'Ataca a dificuldade comum de atrair profissionais qualificados em negócios pequenos, que não competem em salário com empresas grandes.',
+  prompt:`Tenho dificuldade de atrair profissionais qualificados porque não consigo competir em salário com empresas maiores. Me ajude a montar uma estratégia de atração.
+
+Cargo mais difícil de preencher hoje: [CARGO] | O que já ofereço além do salário: [DESCREVA OU "NADA ALÉM DO SALÁRIO"] | Diferenciais reais do meu negócio como empregador: [DESCREVA, EX: FLEXIBILIDADE, APRENDIZADO, PROXIMIDADE COM A LIDERANÇA]
+
+Monte uma estratégia de atração que não dependa de pagar mais: 1) 3 diferenciais que eu poderia comunicar melhor para atrair candidatos, 2) onde buscar esse perfil fora dos canais óbvios (ex: indicação, comunidades, universidades locais), 3) como ajustar a comunicação da vaga para parecer atrativa mesmo sem ser a maior do mercado, 4) um erro comum que pequenos negócios cometem nesse processo.`},
+{ theme:'treinamento', title:'Trilha de Treinamento para Novo Cargo', diff:'INTERMEDIÁRIO', type:'FRAMEWORK',
+  desc:'Organiza uma sequência de aprendizado para alguém que está assumindo uma nova função.',
+  prompt:`Monte uma trilha de treinamento para alguém assumindo o cargo de [CARGO].
+
+Tempo disponível para o treinamento: [SEMANAS] | Conhecimentos que a pessoa já tem: [DESCREVA] | Conhecimentos que precisa desenvolver: [LISTAR]
+
+Organize em módulos com ordem lógica, defina o que é teórico vs. prático em cada módulo, e sugira uma forma simples de avaliar se o conteúdo foi absorvido.`},
+{ theme:'treinamento', title:'Plano de Aula para Reunião de Time', diff:'BÁSICO', type:'TEMPLATE',
+  desc:'Transforma um tema solto em um plano de aula de 30-60 minutos para o time.',
+  prompt:`Crie um plano de aula/treinamento para uma reunião de equipe.
+
+Tema: [TEMA] | Duração: [MINUTOS] | Nível da equipe no assunto: [INICIANTE/INTERMEDIÁRIO]
+
+Estruture: abertura com contexto (por que isso importa agora), conteúdo principal em blocos, um exercício prático rápido, e um fechamento com o que se espera que mude no dia a dia.`},
+{ theme:'treinamento', title:'Material de Apoio em Tópicos', diff:'BÁSICO', type:'GERAÇÃO',
+  desc:'Gera um material de apoio resumido em tópicos para consulta rápida da equipe.',
+  prompt:`Crie um material de apoio em tópicos sobre o tema abaixo, para consulta rápida da equipe.
+
+Tema: [TEMA] | Nível de detalhe: [RESUMIDO/COMPLETO] | Onde será consultado: [IMPRESSO/DIGITAL]
+
+Organize em tópicos curtos e escaneáveis, com um exemplo prático por tópico, evitando parágrafos longos.`},
+{ theme:'treinamento', title:'Estudo de Caso para Treinar a Equipe', diff:'INTERMEDIÁRIO', type:'GERAÇÃO',
+  desc:'Cria um estudo de caso fictício, baseado na realidade da empresa, para discussão em grupo.',
+  prompt:`Crie um estudo de caso fictício para treinar minha equipe sobre [HABILIDADE/TEMA].
+
+Contexto real da empresa que deve inspirar o caso: [DESCREVA A SITUAÇÃO REAL, SEM DADOS SENSÍVEIS]
+
+O estudo de caso deve ter: um cenário com um dilema claro, 3 perguntas para discussão em grupo, e uma "resposta ideal" comentada para o facilitador usar depois.`},
+{ theme:'treinamento', title:'Avaliação de Aprendizado Pós-Treinamento', diff:'INTERMEDIÁRIO', type:'TEMPLATE',
+  desc:'Monta um formulário simples para checar se o treinamento realmente foi absorvido.',
+  prompt:`Crie uma avaliação de aprendizado para depois de um treinamento sobre [TEMA].
+
+Objetivos do treinamento: [LISTAR O QUE A PESSOA DEVERIA SABER FAZER DEPOIS]
+
+Monte 5 perguntas (mistura de teoria e aplicação prática), evitando perguntas de múltipla escolha óbvias, e um critério simples para considerar a pessoa "apta" no tema.`},
+{ theme:'treinamento', title:'Programa de Capacitação Contínua (90 dias)', diff:'AVANÇADO', type:'FRAMEWORK',
+  desc:'Estrutura um programa de desenvolvimento contínuo, não só um treinamento pontual.',
+  prompt:`Monte um programa de capacitação contínua de 90 dias para minha equipe.
+
+Área: [ÁREA] | Principal lacuna de competência hoje: [DESCREVA] | Recursos disponíveis: [TEMPO SEMANAL, ORÇAMENTO, FERRAMENTAS]
+
+Estruture em 3 ciclos de 30 dias, cada um com um objetivo de aprendizado, uma prática aplicada no trabalho real, e um checkpoint de evolução mensurável.`},
+{ theme:'treinamento', title:'Desenvolvimento de Curso', diff:'AVANÇADO', type:'FRAMEWORK',
+  desc:'Estrutura um curso completo do zero — módulos, aulas, exercícios e avaliação — pronto para produzir.',
+  prompt:`Crie a estrutura completa de um curso.
+
+Tema do curso: [TEMA] | Público-alvo: [DESCREVA] | Nível: [INICIANTE/INTERMEDIÁRIO/AVANÇADO] | Carga horária total: [HORAS] | Formato: [GRAVADO/AO VIVO/HÍBRIDO]
+
+Entregue: 1) objetivo geral do curso e o que o aluno será capaz de fazer ao final, 2) estrutura de módulos (nome e objetivo de cada um), 3) para cada módulo, a lista de aulas com título e resumo do conteúdo, 4) uma atividade prática ou exercício por módulo, 5) formato de avaliação final, 6) sugestão de materiais complementares (apostila, checklist, planilha) que reforcem o aprendizado.`},
+{ theme:'treinamento', title:'Metodologia 6D para Treinamentos', diff:'AVANÇADO', type:'FRAMEWORK',
+  desc:'Aplica as 6 Disciplinas (Determinar, Desenhar, Direcionar, Definir, Dar Apoio, Documentar) para estruturar um treinamento com foco em resultado de negócio, não só em conteúdo.',
+  prompt:`Você é um especialista em educação corporativa e na metodologia 6Ds (as seis disciplinas que conectam aprendizagem a resultados de negócio: Determinar, Desenhar, Direcionar, Definir, Dar Apoio e Documentar).
+
+Treinamento que preciso estruturar: [TEMA] | Resultado de negócio que esse treinamento precisa gerar: [EX: REDUZIR ERRO EM X%, AUMENTAR VENDA EM Y%, MELHORAR INDICADOR Z] | Público: [DESCREVA] | Prazo disponível: [DESCREVA]
+
+Aplique as 6 disciplinas e entregue:
+1. Determinar — quais resultados de negócio (não só de aprendizado) esse treinamento precisa gerar, e como isso será medido
+2. Desenhar — a experiência de aprendizagem completa (não só o conteúdo): o que acontece antes, durante e depois do treinamento
+3. Direcionar — como aplicar o conteúdo de forma prática já durante o treinamento, sem deixar só para depois
+4. Definir — o que precisa acontecer no ambiente de trabalho para que o aprendizado seja realmente aplicado (apoio do gestor, ferramentas, rotina)
+5. Dar apoio — como o gestor/líder deve reforçar o aprendizado nas semanas seguintes ao treinamento
+6. Documentar — quais evidências e indicadores comprovam que o treinamento gerou resultado, não apenas satisfação do participante
+
+Ao final, aponte o maior risco de esse treinamento "não pegar" (virar conteúdo esquecido) e como evitar isso.`},
+{ theme:'treinamento', title:'Montagem da Apostila de Treinamento', diff:'INTERMEDIÁRIO', type:'GERAÇÃO',
+  desc:'Transforma o conteúdo de um treinamento em uma apostila completa, pronta para entregar aos participantes.',
+  prompt:`Transforme o conteúdo abaixo em uma apostila de treinamento completa.
+
+Tema do treinamento: [TEMA] | Conteúdo/tópicos que serão abordados: [LISTAR OU COLAR O MATERIAL BASE] | Público: [DESCREVA]
+
+Estruture a apostila com: 1) capa e sumário, 2) introdução explicando o objetivo do treinamento, 3) conteúdo dividido em capítulos/seções lógicas, com linguagem clara e exemplos práticos, 4) exercícios ou checklists ao final de cada seção, 5) um glossário de termos, se houver jargão técnico, 6) uma página de resumo final com os pontos-chave para consulta rápida.`},
+{ theme:'treinamento', title:'Dinâmica para Treinamento', diff:'BÁSICO', type:'GERAÇÃO',
+  desc:'Pergunta o tema do treinamento e sugere dinâmicas prontas para engajar o grupo, com passo a passo de condução.',
+  prompt:`Preciso de sugestões de dinâmica para um treinamento.
+
+Antes de sugerir, me pergunte: 1) qual é o tema do treinamento, 2) quantas pessoas vão participar, 3) quanto tempo está disponível para a dinâmica, 4) qual o objetivo dela (quebrar o gelo, fixar conteúdo, gerar reflexão, ou encerrar o treinamento).
+
+Depois que eu responder, sugira 3 dinâmicas diferentes adequadas ao contexto, e para cada uma: nome da dinâmica, materiais necessários, passo a passo de como conduzir, e a mensagem/aprendizado que ela reforça ao final.`},
+{ theme:'treinamento', title:'Transforme PDF em Slides', diff:'INTERMEDIÁRIO', type:'GERAÇÃO',
+  desc:'Converte o conteúdo de um PDF (apostila, e-book, material) em uma estrutura de slides pronta para apresentação.',
+  prompt:`Transforme o conteúdo do PDF anexado em uma estrutura de slides para apresentação.
+
+PDF: [ANEXE O PDF] | Duração da apresentação: [MINUTOS] | Público: [DESCREVA]
+
+Analise o conteúdo do PDF e entregue: 1) o número de slides recomendado para a duração informada, 2) para cada slide: o título, o conteúdo resumido em bullets (não parágrafos longos), e uma nota de fala para quem for apresentar, 3) sugestão de onde inserir imagens, gráficos ou exemplos visuais, 4) um slide de abertura com o gancho inicial e um slide de fechamento com a chamada para ação ou resumo.`},
+{ theme:'treinamento', title:'Cultura de Aprendizado Contínuo (Lifelong Learning)', diff:'AVANÇADO', type:'FRAMEWORK',
+  desc:'Estrutura uma rotina simples de aprendizado contínuo para a equipe, sem depender de treinamentos formais caros.',
+  prompt:`Quero criar uma cultura de aprendizado contínuo na minha equipe, sem depender só de treinamentos formais caros.
+
+Tamanho da equipe: [NÚMERO] | Áreas de conhecimento mais importantes para o negócio hoje: [LISTAR] | Tempo/orçamento disponível: [DESCREVA]
+
+Monte um plano de aprendizado contínuo de baixo custo: 1) uma rotina simples (ex: 30 min por semana) para a equipe compartilhar aprendizados entre si, 2) fontes gratuitas ou baratas de conteúdo relevante para as áreas listadas, 3) como reconhecer e incentivar quem aplica o que aprendeu, 4) um jeito simples de medir se isso está gerando resultado, não só "engajamento".`},
+{ theme:'feedback', title:'Feedback Estruturado (SBI)', diff:'BÁSICO', type:'FRAMEWORK',
+  desc:'Estrutura um feedback usando Situação-Comportamento-Impacto, sem soar acusatório.',
+  prompt:`Me ajude a estruturar um feedback usando o modelo SBI.
+
+Situação específica: [DESCREVA O QUE ACONTECEU] | Impacto no time/resultado: [DESCREVA] | Meu objetivo com a conversa: [CORRIGIR/DESENVOLVER/ALINHAR]
+
+Monte: a frase de abertura (neutra), a descrição do comportamento (fatos, não interpretação), a explicação do impacto, uma pergunta que passe a palavra, e o próximo passo esperado.`},
+{ theme:'feedback', title:'Conversa Difícil / Desligamento', diff:'AVANÇADO', type:'FRAMEWORK',
+  desc:'Prepara a estrutura e o tom para uma conversa de última chance ou desligamento.',
+  prompt:`Preciso conduzir uma conversa difícil. Me ajude a estruturar com clareza e empatia.
+
+Tipo de conversa: [ÚLTIMA CHANCE/DESLIGAMENTO/SUSPENSÃO DE BENEFÍCIO] | Histórico resumido (sem nomes): [DESCREVA] | Motivo objetivo: [DESCREVA]
+
+Estruture: as 2 primeiras frases (diretas e humanas), como comunicar o motivo sem soar pessoal, como responder se a pessoa contestar, como encerrar com clareza, e o que evitar dizer.`},
+{ theme:'feedback', title:'Avaliação de Desempenho Semestral', diff:'INTERMEDIÁRIO', type:'TEMPLATE',
+  desc:'Cria a estrutura de uma avaliação de desempenho justa e objetiva.',
+  prompt:`Monte um formulário de avaliação de desempenho semestral.
+
+Cargo: [CARGO] | Competências avaliadas: [LISTAR] | Metas do período: [LISTAR]
+
+Para cada competência e meta, defina uma escala simples de avaliação, um campo de evidência (exemplo concreto), e um campo de plano de ação para o próximo semestre.`},
+{ theme:'feedback', title:'Reconhecimento Público de Resultado', diff:'BÁSICO', type:'GERAÇÃO',
+  desc:'Escreve uma mensagem de reconhecimento genuína, não genérica, para um resultado da equipe.',
+  prompt:`Escreva uma mensagem de reconhecimento para compartilhar com o time (ou publicamente).
+
+Quem/qual time está sendo reconhecido: [DESCREVA] | O que foi feito de especial: [DESCREVA O RESULTADO] | Tom desejado: [FORMAL/CASUAL]
+
+A mensagem deve ser específica (não "parabéns pelo empenho"), citar o esforço real por trás do resultado, e reforçar o comportamento que eu quero ver se repetir.`},
+{ theme:'feedback', title:'Feedback para Baixo Desempenho Recorrente', diff:'AVANÇADO', type:'FRAMEWORK',
+  desc:'Estrutura uma conversa firme sobre desempenho que não melhorou depois de feedbacks anteriores.',
+  prompt:`Preciso dar um feedback sobre um desempenho que já foi conversado antes e não melhorou.
+
+Combinados anteriores (sem nomes): [DESCREVA O QUE JÁ FOI ALINHADO] | O que continua acontecendo: [DESCREVA] | Consequência se não melhorar: [DESCREVA]
+
+Estruture: como abrir relembrando o combinado anterior sem soar repetitivo, como ser direto sobre a gravidade, como definir um prazo e critério objetivo de melhora, e como registrar isso formalmente.`},
+{ theme:'feedback', title:'Roteiro de Conversa 1:1', diff:'BÁSICO', type:'TEMPLATE',
+  desc:'Estrutura uma conversa individual recorrente para não virar só status de tarefas.',
+  prompt:`Crie um roteiro de conversa 1:1 com um liderado.
+
+Frequência: [SEMANAL/QUINZENAL] | Foco principal desse ciclo: [DESENVOLVIMENTO/RESULTADOS/BEM-ESTAR]
+
+Monte uma pauta com: abertura pessoal breve, revisão de combinados anteriores, um espaço para o liderado trazer pauta própria, e fechamento com 1 combinado claro para o próximo período.`},
+{ theme:'feedback', title:'Feedback Positivo', diff:'BÁSICO', type:'FRAMEWORK',
+  desc:'Estrutura um feedback positivo específico e genuíno, que reforça o comportamento que você quer ver se repetir.',
+  prompt:`Me ajude a estruturar um feedback positivo para um colaborador.
+
+O que essa pessoa fez de bom: [DESCREVA A SITUAÇÃO ESPECÍFICA] | Impacto que isso gerou: [DESCREVA] | Como prefiro dar esse feedback: [EM PÚBLICO/PARTICULAR, ESCRITO/VERBAL]
+
+Monte um feedback positivo que: 1) seja específico — não "bom trabalho", mas o que exatamente foi bom, 2) conecte a ação ao impacto real que ela gerou, 3) reforce o comportamento que você quer ver se repetir, 4) termine incentivando a pessoa a continuar nesse caminho.`},
+{ theme:'feedback', title:'Programa de Coaching Profissional', diff:'AVANÇADO', type:'FRAMEWORK',
+  desc:'Estrutura um programa completo de coaching profissional para um colaborador, com sessões progressivas de autoconhecimento, valores, metas e plano de ação.',
+  prompt:`Você é um especialista em coaching profissional (foco em objetivos de carreira e desempenho, não em terapia). Monte um programa de coaching profissional estruturado para o colaborador abaixo.
+
+Colaborador/coachee: [CARGO/ÁREA] | Objetivo principal que ele quer alcançar profissionalmente: [DESCREVA] | Nº de sessões disponíveis: [EX: 6 A 8 SESSÕES] | Periodicidade: [SEMANAL/QUINZENAL]
+
+Estruture o programa com sessões progressivas, cada uma com 3 blocos — Fundamento (o que é importante entender antes da sessão), Estrutura da Sessão (o passo a passo prático) e Tarefa (o que o coachee leva para praticar até a próxima sessão):
+
+1. Sessão de abertura — apresentar o processo, alinhar expectativas, e aplicar uma autoavaliação inicial de percepção profissional
+2. Sessão de autoconhecimento — mapear pontos fortes, lacunas e como isso afeta a performance no cargo
+3. Sessão de valores e propósito profissional — o que realmente motiva esse profissional no trabalho
+4. Sessão de definição de metas — transformar o objetivo geral em metas específicas e mensuráveis (SMART)
+5. Sessão de motivação e crenças limitantes — identificar o que trava a pessoa de agir
+6. Sessão de planejamento e plano de ação — transformar reflexão em ação concreta com prazos
+7. Sessão de gestão do tempo e prioridades — organizar a rotina para sustentar as mudanças
+8. Sessão de fechamento — revisão dos avanços, reconhecimento das conquistas, e plano de continuidade
+
+Para cada sessão, sugira também 3 perguntas poderosas (abertas, que estimulem reflexão, nunca de sim/não) específicas daquele tema.
+
+Ao final, monte um modelo de ficha de registro de sessão (coachee, data, proposta da sessão, desenvolvimento, aprendizados, tarefas combinadas) para documentar o acompanhamento.`},
+{ theme:'feedback', title:'Entrevista de Desligamento', diff:'INTERMEDIÁRIO', type:'FRAMEWORK',
+  desc:'Estrutura uma entrevista de desligamento para captar aprendizados reais, sem virar só uma formalidade de RH.',
+  prompt:`Crie um roteiro de entrevista de desligamento.
+
+Motivo do desligamento: [DEMISSÃO PELA EMPRESA / PEDIDO DE DEMISSÃO DO COLABORADOR] | Cargo/área do colaborador: [DESCREVA] | Tempo de casa: [DESCREVA]
+
+Monte um roteiro com: 1) uma abertura que deixe a pessoa à vontade para falar com sinceridade, 2) perguntas sobre a experiência dela na empresa (o que funcionou, o que não funcionou), 3) perguntas específicas sobre o motivo da saída, sem soar acusatório, 4) uma pergunta sobre o que a empresa poderia ter feito diferente, 5) um fechamento respeitoso, agradecendo a contribuição da pessoa.`},
+{ theme:'feedback', title:'Feedback Coletivo', diff:'INTERMEDIÁRIO', type:'FRAMEWORK',
+  desc:'Estrutura um feedback dado para o time inteiro sobre um resultado ou comportamento coletivo, sem expor ninguém individualmente.',
+  prompt:`Me ajude a estruturar um feedback coletivo para minha equipe.
+
+O que aconteceu (resultado ou comportamento do time): [DESCREVA] | É um feedback positivo, corretivo ou misto: [DESCREVA] | Tamanho da equipe: [NÚMERO]
+
+Monte um feedback coletivo que: 1) abra reconhecendo o esforço do grupo antes de qualquer crítica, 2) descreva o padrão observado sem apontar indivíduos específicos, 3) explique o impacto desse padrão no resultado do time, 4) proponha um ou dois ajustes práticos para todos, 5) termine reforçando a confiança na capacidade do time de melhorar.`},
+{ theme:'feedback', title:'Plano de Ação para Motivação de Equipe', diff:'AVANÇADO', type:'FRAMEWORK',
+  desc:'Ataca o maior desafio de liderança apontado por gestores em pesquisas recentes — manter a equipe motivada — com um plano prático.',
+  prompt:`Pesquisas recentes apontam que manter a motivação contínua da equipe é o maior desafio de liderança para os gestores hoje. Me ajude a criar um plano de ação para minha equipe.
+
+Sinais de desmotivação que percebo: [DESCREVA] | Tamanho da equipe: [NÚMERO] | O que já tentei fazer a respeito: [DESCREVA OU "NADA AINDA"]
+
+Monte um plano de ação: 1) as 3 causas mais prováveis de desmotivação com base no que descrevi, 2) uma ação de curto prazo (essa semana) para cada causa, 3) uma forma de medir se a motivação está melhorando, sem depender só da minha percepção, 4) um erro comum de gestores ao tentar motivar equipe que eu devo evitar, como usar só bônus financeiro.`},
+{ theme:'feedback', title:'Conversa de Cuidado com o Bem-Estar do Colaborador', diff:'INTERMEDIÁRIO', type:'FRAMEWORK',
+  desc:'Estrutura uma conversa de cuidado genuíno quando um colaborador parece sobrecarregado, sem invadir a vida pessoal dele.',
+  prompt:`Percebo sinais de que um colaborador está sobrecarregado ou desgastado, e quero ter uma conversa de cuidado genuína, sem invadir a vida pessoal dele.
+
+Sinais observados: [DESCREVA, EX: QUEDA DE PRODUTIVIDADE, ISOLAMENTO, IRRITABILIDADE] | Contexto de trabalho atual dessa pessoa: [DESCREVA, EX: SOBRECARGA DE TAREFAS, PRAZO APERTADO]
+
+Me ajude a estruturar essa conversa: 1) como abrir o assunto com empatia, sem soar invasivo ou como uma avaliação de desempenho, 2) 3 perguntas abertas que mostrem cuidado genuíno, 3) como ajustar a carga de trabalho ou os prazos, se for o caso, 4) para quais recursos de apoio (RH, canal de saúde da empresa, se houver) eu deveria encaminhar a pessoa — deixando claro que questões de saúde mental não devem ser resolvidas sozinho como gestor, e sim por profissionais qualificados.`},
+{ theme:'feedback', title:'Roteiro de Comunicação Transparente de Mudança', diff:'INTERMEDIÁRIO', type:'FRAMEWORK',
+  desc:'Estrutura a comunicação de uma mudança organizacional de forma transparente, reduzindo ruído e ansiedade da equipe.',
+  prompt:`Preciso comunicar uma mudança para minha equipe e quero fazer isso de forma transparente, sem gerar pânico ou boatos.
+
+Mudança que vou comunicar: [DESCREVA] | Motivo da mudança: [DESCREVA] | Impacto real no dia a dia da equipe: [DESCREVA]
+
+Estruture a comunicação: 1) como abrir explicando o "porquê" antes do "o quê", 2) o que dizer sobre o impacto real, sem minimizar nem exagerar, 3) como lidar com perguntas difíceis na hora, como "isso significa demissão?", 4) o que fazer nos dias seguintes para que a mudança não vire boato e desinformação.`},
+{ theme:'monitoramento', title:'Rotina de Acompanhamento Diário da Equipe', diff:'BÁSICO', type:'FRAMEWORK',
+  desc:'Cria uma rotina diária curta para acompanhar o time sem microgerenciar.',
+  prompt:`Crie uma rotina de acompanhamento diário da minha equipe.
+
+Tamanho da equipe: [NÚMERO] | Indicadores que mais importam: [LISTAR] | Tempo disponível por dia: [MINUTOS]
+
+Monte um checklist diário de 5 minutos: o que checar, em que ordem, e o que fazer quando encontrar um desvio.`},
+{ theme:'monitoramento', title:'Painel de Indicadores da Semana', diff:'INTERMEDIÁRIO', type:'GERAÇÃO',
+  desc:'Transforma indicadores soltos da semana em um painel para compartilhar com o time.',
+  prompt:`Organize os indicadores da semana abaixo em um painel simples para compartilhar com o time.
+
+Indicadores: [LISTAR NOME, META E RESULTADO DE CADA UM]
+
+Para cada indicador, sinalize se está no verde/amarelo/vermelho, aponte o que mais chamou atenção na semana, e sugira 1 foco para a próxima semana.`},
+{ theme:'monitoramento', title:'Alerta de Desvio de Meta', diff:'INTERMEDIÁRIO', type:'ANÁLISE',
+  desc:'Identifica se um desvio de meta é pontual ou uma tendência preocupante.',
+  prompt:`Analise se este desvio de meta é pontual ou uma tendência.
+
+Meta: [VALOR] | Resultado das últimas [N] semanas/meses: [LISTAR VALORES EM ORDEM]
+
+Diga: 1) se é um desvio isolado ou um padrão, 2) o ponto exato onde a tendência começou a piorar, 3) se merece ação imediata ou apenas observação, 4) uma pergunta que eu deveria investigar antes de agir.`},
+{ theme:'monitoramento', title:'Checklist de Auditoria de Rotina', diff:'BÁSICO', type:'TEMPLATE',
+  desc:'Cria uma checklist para auditar se uma rotina/processo está sendo seguido de verdade.',
+  prompt:`Crie uma checklist de auditoria para verificar se a rotina abaixo está sendo seguida.
+
+Rotina/processo: [DESCREVA O PROCESSO PASSO A PASSO COMO DEVERIA SER]
+
+Monte uma checklist de verificação com itens objetivos (sim/não), destacando os pontos onde as pessoas mais costumam pular etapas.`},
+{ theme:'monitoramento', title:'Relatório de Acompanhamento Mensal', diff:'INTERMEDIÁRIO', type:'GERAÇÃO',
+  desc:'Consolida o mês em um relatório de acompanhamento fácil de revisar.',
+  prompt:`Consolide o mês abaixo em um relatório de acompanhamento.
+
+Principais indicadores e resultados do mês: [LISTAR] | Ações que foram combinadas no mês anterior: [LISTAR E O STATUS DE CADA UMA]
+
+Gere: um resumo do mês em 3 frases, o status de cada ação combinada (feita/atrasada/cancelada), e os focos para o próximo mês.`},
+{ theme:'monitoramento', title:'Sistema de Alertas por Exceção', diff:'AVANÇADO', type:'FRAMEWORK',
+  desc:'Define regras claras de quando um número deve virar um alerta automático, evitando ruído.',
+  prompt:`Me ajude a criar um sistema de alertas por exceção (só me avisar quando algo realmente precisar de atenção).
+
+Indicadores monitorados: [LISTAR] | Faixa considerada normal para cada um: [DESCREVA OU "NÃO SEI, ME AJUDE A DEFINIR"]
+
+Para cada indicador, defina o gatilho exato que deveria virar um alerta, o nível de urgência (baixo/médio/crítico), e para quem esse alerta deveria ser enviado.`},
+{ theme:'monitoramento', title:'Monitoramento de Mercado', diff:'INTERMEDIÁRIO', type:'ANÁLISE',
+  desc:'Busca as últimas notícias do seu segmento, produto e concorrência na internet, e sugere termos para configurar no Google Alertas.',
+  prompt:`Você tem acesso à internet. Pesquise as notícias mais recentes sobre o mercado abaixo.
+
+Segmento: [DESCREVA] | Produto/serviço: [DESCREVA] | Concorrentes ou temas específicos que quero acompanhar: [LISTAR]
+
+Busque e me traga: 1) as principais notícias e movimentos do meu segmento nos últimos 30 dias, 2) mudanças relevantes de concorrentes (lançamentos, preços, expansão), 3) tendências emergentes que podem impactar meu negócio, 4) um resumo do que merece atenção imediata versus o que é só para acompanhar.
+
+Ao final, sugira 5 termos de busca ideais para eu configurar no Google Alertas e manter esse monitoramento automático e contínuo, sem precisar pedir de novo toda semana.`},
+{ theme:'monitoramento', title:'Monitoramento de Comentários', diff:'AVANÇADO', type:'ANÁLISE',
+  desc:'Pesquisa reviews, comentários em fóruns, redes sociais e Reclame Aqui sobre sua empresa, e traz um panorama de reputação online.',
+  prompt:`Você tem acesso à internet. Pesquise a reputação online da empresa abaixo.
+
+Nome da empresa: [NOME] | Site: [URL]
+
+Pesquise e traga: 1) avaliações e reviews em plataformas relevantes (Google Meu Negócio, marketplaces, apps), 2) comentários em fóruns e comunidades sobre a empresa, 3) menções e comentários em redes sociais, 4) reclamações no Reclame Aqui (nota geral, índice de resposta, principais motivos recorrentes), 5) um resumo do sentimento predominante (positivo/neutro/negativo) e os 3 temas que mais aparecem, positivos e negativos. Se alguma informação não for encontrada, diga isso claramente em vez de presumir.
+
+Termine com: 1) os 2 pontos mais urgentes que merecem resposta ou ação, 2) uma sugestão de como responder às críticas mais recorrentes.`},
+{ theme:'monitoramento', title:'Monitoramento da Qualidade', diff:'INTERMEDIÁRIO', type:'FRAMEWORK',
+  desc:'Cria uma rotina de monitoramento de qualidade — o que checar, com que frequência, e o que fazer com os desvios encontrados.',
+  prompt:`Crie uma rotina de monitoramento de qualidade para o processo/produto abaixo.
+
+Processo ou produto a monitorar: [DESCREVA] | Padrão de qualidade esperado: [DESCREVA] | Frequência disponível para monitorar: [DIÁRIA/SEMANAL]
+
+Monte: 1) os pontos críticos de qualidade que devem ser verificados, 2) uma checklist objetiva (sim/não ou nota) para cada ponto, 3) o critério que define quando um desvio precisa de ação imediata, 4) um modelo simples de registro dos desvios encontrados (o quê, quando, gravidade, ação tomada), 5) como comunicar os resultados sem soar punitivo.`},
+{ theme:'monitoramento', title:'Análise de Abordagens', diff:'AVANÇADO', type:'ANÁLISE',
+  desc:'Analisa transcrições ou descrições de abordagens de venda/atendimento e aponta o que funcionou, o que não funcionou e como melhorar.',
+  prompt:`Analise a abordagem abaixo e me dê um feedback estruturado.
+
+Transcrição ou descrição da abordagem (ligação, atendimento, venda): [COLE OU DESCREVA] | Objetivo da abordagem: [VENDER/ATENDER/NEGOCIAR/OUTRO] | Resultado obtido: [DESCREVA]
+
+Analise e me diga: 1) o que funcionou bem na abordagem, 2) os momentos em que a abordagem perdeu força ou o cliente esfriou, 3) se as perguntas certas foram feitas no momento certo, 4) como a objeção (se houve) foi tratada, 5) 3 ajustes práticos para a próxima abordagem semelhante, 6) uma nota geral de 0 a 10 com a justificativa.`},
+{ theme:'monitoramento', title:'Diagnóstico de Ligações', diff:'AVANÇADO', type:'ANÁLISE',
+  desc:'Analisa a transcrição de uma ligação de vendas/atendimento e diagnostica pontos fortes, falhas e oportunidades de melhoria.',
+  prompt:`Analise a transcrição da ligação abaixo e faça um diagnóstico completo.
+
+Transcrição da ligação: [COLE A TRANSCRIÇÃO] | Tipo de ligação: [VENDA/COBRANÇA/SUPORTE/OUTRO] | Resultado da ligação: [DESCREVA]
+
+Diagnostique: 1) como foi a abertura da ligação (rapport, apresentação, permissão para continuar), 2) a qualidade das perguntas de diagnóstico feitas, 3) como o vendedor/atendente conduziu o meio da ligação (escuta ativa, clareza, condução), 4) como as objeções foram tratadas, se houve, 5) como foi o fechamento/próximo passo definido, 6) uma pontuação por etapa (abertura, meio, fechamento) e uma nota geral, 7) os 2 pontos mais importantes para essa pessoa treinar antes da próxima ligação.`},
+{ theme:'monitoramento', title:'Monitoramento de Clima com Pulse Check', diff:'INTERMEDIÁRIO', type:'FRAMEWORK',
+  desc:'Cria uma pesquisa curta e recorrente ("pulse check") para acompanhar o clima da equipe antes que vire um problema grande.',
+  prompt:`Quero criar uma pesquisa curta e recorrente para acompanhar o clima da minha equipe, sem virar uma pesquisa de clima anual gigante e burocrática.
+
+Tamanho da equipe: [NÚMERO] | Frequência desejada: [SEMANAL/QUINZENAL/MENSAL] | Temas que mais me preocupam hoje: [DESCREVA, EX: CARGA DE TRABALHO, RELACIONAMENTO COM LIDERANÇA]
+
+Monte um pulse check de no máximo 5 perguntas: 1) as perguntas objetivas (escala simples) que capturam os temas mais importantes, 2) uma pergunta aberta para captar o que não está nas alternativas, 3) como garantir anonimato para respostas sinceras, 4) um critério simples para saber quando um resultado exige ação imediata versus apenas observação.`},
+{ theme:'qualidade', title:'Procedimento Operacional Padrão (POP)', diff:'BÁSICO', type:'TEMPLATE',
+  desc:'Transforma uma explicação solta em um POP de 1 página, claro e objetivo.',
+  prompt:`Transforme a descrição abaixo em um Procedimento Operacional Padrão (POP) de 1 página.
+
+Processo: [NOME] | Como funciona hoje (explique com suas palavras): [DESCREVA] | Quem executa: [CARGO] | Frequência: [DIÁRIA/SEMANAL]
+
+Gere: objetivo em 1 frase, passo a passo numerado sem jargão, pontos de atenção/erros comuns, o que fazer em caso de exceção, e quem mantém o POP atualizado.`},
+{ theme:'qualidade', title:'Checklist de Não Conformidade', diff:'BÁSICO', type:'TEMPLATE',
+  desc:'Cria uma checklist padrão para registrar e tratar não conformidades.',
+  prompt:`Crie uma checklist de registro de não conformidade para o processo abaixo.
+
+Processo/produto: [DESCREVA] | Tipos de não conformidade mais comuns: [LISTAR SE SOUBER]
+
+Monte uma checklist com: descrição do problema, onde ocorreu, gravidade (baixa/média/alta), ação imediata de contenção, e responsável pela correção definitiva.`},
+{ theme:'qualidade', title:'Análise de Causa Raiz (Ishikawa)', diff:'AVANÇADO', type:'ANÁLISE',
+  desc:'Organiza um problema recorrente nas 6 categorias do diagrama de Ishikawa.',
+  prompt:`Estruture uma análise de causa raiz usando o Diagrama de Ishikawa (6M).
+
+Problema recorrente: [DESCREVA] | Frequência: [QUANTAS VEZES NO PERÍODO] | O que já foi tentado: [DESCREVA OU "NADA AINDA"]
+
+Para cada categoria (Método, Mão de obra, Máquina, Material, Medição, Meio ambiente), liste causas possíveis específicas ao meu contexto, e aponte as 2 mais prováveis, com forma de validar cada uma.`},
+{ theme:'qualidade', title:'Plano de Ação 5W2H', diff:'BÁSICO', type:'FRAMEWORK',
+  desc:'Converte um problema identificado em plano de ação estruturado 5W2H.',
+  prompt:`Transforme o problema abaixo em um plano de ação 5W2H.
+
+Problema: [DESCREVA] | Onde ocorreu: [SETOR/ETAPA] | Impacto: [DESCREVA]
+
+Gere a tabela completa: What (ação), Why (justificativa), Where (local), When (prazo), Who (responsável sugerido), How (passo a passo), How much (custo/recurso estimado).`},
+{ theme:'qualidade', title:'Auditoria de Processo Interno', diff:'INTERMEDIÁRIO', type:'FRAMEWORK',
+  desc:'Estrutura uma auditoria interna para verificar se um processo está sendo seguido corretamente.',
+  prompt:`Crie um roteiro de auditoria interna para o processo abaixo.
+
+Processo: [DESCREVA COMO DEVERIA FUNCIONAR] | Frequência da auditoria: [MENSAL/TRIMESTRAL] | Quem será auditado: [ÁREA/CARGO]
+
+Monte: os pontos de verificação em ordem de execução, o que caracteriza uma falha grave vs. leve, e como registrar e comunicar os resultados sem soar punitivo.`},
+{ theme:'qualidade', title:'Plano de Redução de Retrabalho', diff:'AVANÇADO', type:'FRAMEWORK',
+  desc:'Cria um plano de 90 dias para reduzir retrabalho e desperdício.',
+  prompt:`Preciso de um plano de 90 dias para reduzir retrabalho na minha operação.
+
+% de retrabalho atual: [%] | Causa já identificada (se souber): [DESCREVA] | Custo estimado por mês: [VALOR]
+
+Monte: diagnóstico rápido de onde o retrabalho se concentra, metas de redução para os dias 30/60/90, ações por fase, um indicador semanal, e uma forma motivadora (não punitiva) de comunicar a meta ao time.`},
+{ theme:'qualidade', title:'Programa de 5S', diff:'INTERMEDIÁRIO', type:'FRAMEWORK',
+  desc:'Ensina como aplicar o Programa 5S no seu negócio, adaptado à sua realidade — não a teoria genérica.',
+  prompt:`Você é um especialista em Lean e no Programa 5S (Seiri/Utilização, Seiton/Organização, Seiso/Limpeza, Seiketsu/Padronização, Shitsuke/Disciplina). Me ensine como aplicar o 5S no meu negócio.
+
+Tipo de negócio/setor: [DESCREVA] | Ambiente onde quero aplicar: [EX: LOJA, FÁBRICA, ESCRITÓRIO, ALMOXARIFADO] | Principal problema que quero resolver: [EX: DESORGANIZAÇÃO, RETRABALHO, PERDA DE TEMPO PROCURANDO COISAS]
+
+Para cada um dos 5 sensos, explique: 1) o que significa na prática para o meu tipo de negócio, 2) uma ação concreta para implementar essa semana, 3) como saber se está sendo seguido (indicador simples), 4) um erro comum que as empresas cometem nesse senso.
+
+Ao final, monte um checklist de auditoria 5S de uma página para eu usar semanalmente, e sugira como lançar o programa para a equipe sem parecer só "mais uma regra chata".`},
+{ theme:'qualidade', title:'Programa Toyota (Sistema Toyota de Produção Adaptado)', diff:'AVANÇADO', type:'FRAMEWORK',
+  desc:'Adapta os princípios do Sistema Toyota de Produção (desperdícios, just-in-time, kaizen) para a realidade do seu negócio, mesmo fora da indústria.',
+  prompt:`Você é um especialista em Lean Manufacturing e no Sistema Toyota de Produção (STP). Adapte os princípios do STP para o meu negócio, que não é uma fábrica de automóveis.
+
+Tipo de negócio: [DESCREVA] | Processo que eu quero melhorar: [DESCREVA] | Principal desperdício que já percebo: [EX: TEMPO DE ESPERA, RETRABALHO, ESTOQUE PARADO, MOVIMENTAÇÃO DESNECESSÁRIA]
+
+Aplique os conceitos centrais do STP ao meu contexto:
+1. Os desperdícios clássicos do Lean — para cada um, um exemplo real de como ele provavelmente aparece no meu tipo de negócio
+2. Just-in-time — como aplicar a lógica de "produzir/entregar só o necessário, na hora certa" no meu processo
+3. Jidoka (qualidade na fonte) — como parar o processo assim que um erro aparece, em vez de deixar passar adiante
+4. Kaizen (melhoria contínua) — como estruturar pequenas melhorias constantes com a equipe, sem grandes investimentos
+5. Um plano de implementação em 3 fases (diagnóstico, primeiras ações, consolidação), realista para o meu porte de negócio`},
+{ theme:'qualidade', title:'Implantação de Programa ISO', diff:'AVANÇADO', type:'FRAMEWORK',
+  desc:'Estrutura o passo a passo de implantação de um sistema de gestão baseado em norma ISO, adaptado ao porte da empresa.',
+  prompt:`Você é um especialista em sistemas de gestão da qualidade e implantação de normas ISO. Me ajude a estruturar a implantação de um programa ISO na minha empresa.
+
+Norma que pretendo implantar: [EX: ISO 9001 - QUALIDADE / ISO 14001 - AMBIENTAL / OUTRA] | Porte da empresa: [PEQUENA/MÉDIA/GRANDE] | Já existe algum processo documentado hoje: [SIM/NÃO, DESCREVA]
+
+Monte um plano de implantação com: 1) diagnóstico inicial — o que a empresa já tem hoje que pode ser aproveitado e as principais lacunas frente à norma, 2) etapas do processo em ordem (política da qualidade, mapeamento de processos, documentação, treinamento, auditoria interna, auditoria de certificação), 3) um cronograma realista por etapa, 4) os documentos obrigatórios mínimos que preciso ter prontos, 5) os erros mais comuns que fazem empresas reprovarem na auditoria de certificação, 6) uma estimativa de tempo total do processo, do zero até a certificação.`},
+{ theme:'qualidade', title:'Análise de Perdas e Danos', diff:'AVANÇADO', type:'ANÁLISE',
+  desc:'Analisa uma planilha, PDF ou documento de perdas/danos e apresenta um relatório completo com causas e recomendações.',
+  prompt:`Você é um especialista em análise de perdas e danos operacionais. Vou anexar/colar os dados de perdas e danos do meu negócio — pode ser uma planilha, PDF ou documento.
+
+Dados: [ANEXE O ARQUIVO OU COLE OS DADOS: TIPO DE PERDA, DATA, QUANTIDADE/VALOR, CAUSA SE HOUVER, SETOR] | Período analisado: [DESCREVA] | Contexto do negócio: [DESCREVA O TIPO DE OPERAÇÃO]
+
+Analise os dados e apresente um relatório completo com: 1) o valor/volume total de perdas no período, 2) a categorização das perdas por tipo (ex: quebra, roubo, vencimento, erro operacional, transporte), 3) os 3 maiores focos de perda e sua causa mais provável, 4) se há um padrão por período, setor ou responsável, 5) o impacto financeiro estimado das perdas no resultado, 6) recomendações práticas e priorizadas para reduzir as perdas mais relevantes, com uma meta de redução sugerida para os próximos 90 dias.`},
+{ theme:'qualidade', title:'Padronização de Atendimento ao Cliente', diff:'INTERMEDIÁRIO', type:'TEMPLATE',
+  desc:'Cria um padrão de atendimento para garantir consistência, independente de quem atende o cliente.',
+  prompt:`Quero padronizar o atendimento ao cliente para que a experiência seja consistente, independente de quem atende.
+
+Canal de atendimento: [TELEFONE/WHATSAPP/PRESENCIAL/E-MAIL] | Situações mais comuns de atendimento: [LISTAR] | Tom da marca: [DESCREVA]
+
+Monte um padrão de atendimento com: 1) um roteiro de abertura padrão, 2) diretrizes de tom e linguagem (o que usar, o que evitar), 3) um passo a passo para as situações mais comuns listadas, 4) o que fazer quando a situação foge do padrão (quando escalar, para quem), 5) um checklist rápido para o atendente verificar antes de encerrar o atendimento.`},
+{ theme:'performance', title:'Definição de Metas SMART', diff:'BÁSICO', type:'FRAMEWORK',
+  desc:'Transforma um objetivo vago em uma meta específica, mensurável e com prazo.',
+  prompt:`Transforme o objetivo abaixo em uma meta SMART.
+
+Objetivo em linguagem livre: [DESCREVA O QUE VOCÊ QUER ALCANÇAR]
+Prazo desejado: [PRAZO]
+
+Reescreva como meta SMART (específica, mensurável, atingível, relevante, temporal), e sugira 2 indicadores para acompanhar o progresso ao longo do caminho, não só no final.`},
+{ theme:'performance', title:'Construção de OKRs do Time', diff:'INTERMEDIÁRIO', type:'FRAMEWORK',
+  desc:'Estrutura os OKRs do trimestre a partir da prioridade estratégica da área.',
+  prompt:`Me ajude a construir os OKRs do meu time para o trimestre.
+
+Prioridade estratégica da área: [DESCREVA] | Recursos e limitações atuais: [DESCREVA]
+
+Proponha 1 Objetivo inspirador e claro, e 3 Key Results mensuráveis que, se atingidos, comprovem que o objetivo foi alcançado (evite KRs que são só tarefas).`},
+{ theme:'performance', title:'PDI (Plano de Desenvolvimento Individual)', diff:'INTERMEDIÁRIO', type:'TEMPLATE',
+  desc:'Cria um plano de desenvolvimento individual focado nas lacunas reais do colaborador.',
+  prompt:`Monte um PDI para um colaborador.
+
+Cargo: [CARGO] | Pontos fortes observados: [LISTAR] | Lacunas a desenvolver: [LISTAR] | Objetivo de carreira da pessoa (se souber): [DESCREVA]
+
+Estruture: 2 objetivos de desenvolvimento para os próximos 6 meses, ações concretas para cada um (não só "fazer um curso"), e como vamos medir a evolução.`},
+{ theme:'performance', title:'Plano para Colaborador de Baixa Performance', diff:'AVANÇADO', type:'FRAMEWORK',
+  desc:'Estrutura um plano formal de melhoria de performance (PIP) claro e justo.',
+  prompt:`Preciso montar um plano de melhoria de performance (PIP) para um colaborador.
+
+Cargo: [CARGO] | Onde a performance está abaixo do esperado: [DESCREVA COM DADOS] | Já houve conversa sobre isso antes: [SIM/NÃO, RESUMA]
+
+Estruture: os critérios objetivos de melhora esperados, o prazo (geralmente 30-60-90 dias), o suporte que a empresa vai oferecer, e a consequência clara se não houver melhora.`},
+{ theme:'performance', title:'Matriz de Performance x Potencial', diff:'AVANÇADO', type:'ANÁLISE',
+  desc:'Posiciona os colaboradores-chave na matriz 9-box para decisões de sucessão e retenção.',
+  prompt:`Me ajude a montar uma matriz de performance x potencial (9-box) para minha equipe-chave.
+
+Para cada colaborador (use "Colaborador A", "B", etc.), descreva: função, desempenho atual, sinais de potencial de crescimento, risco de saída: [LISTAR]
+
+Posicione cada um no quadrante correspondente, sugira uma ação prioritária por quadrante, e aponte quais posições têm maior risco de sucessão sem plano B.`},
+{ theme:'performance', title:'Revisão Trimestral de Metas', diff:'INTERMEDIÁRIO', type:'GERAÇÃO',
+  desc:'Consolida o trimestre em uma revisão clara do que foi ou não atingido, e por quê.',
+  prompt:`Consolide o trimestre em uma revisão de metas.
+
+Metas do trimestre e resultado de cada uma: [LISTAR META VS. RESULTADO]
+
+Gere: quais metas foram batidas e quais não, a causa mais provável para as que não foram batidas, e 2 ajustes para o próximo trimestre com base no que foi aprendido.`},
+{ theme:'performance', title:'Implementação do Modelo IOCD (Integra-Ocupa-Controla-Domina)', diff:'AVANÇADO', type:'FRAMEWORK',
+  desc:'Monta a matriz de competências IOCD de um cargo, mapeando o nível esperado de cada atribuição por senioridade — base para evolução lateral e promoção.',
+  prompt:`Você é um especialista em gestão de pessoas e no modelo IOCD de avaliação de competências. Os níveis traduzem a evolução do colaborador considerando conhecimento, autonomia e resultado gerado:
+- Integra (I) — faz: aplica o básico, precisa de acompanhamento, menor autonomia
+- Ocupa (O) — faz bem: já domina as competências principais, autonomia relativa, precisa de gerenciamento em situações complexas
+- Controla (C) — faz bem e sempre: pratica com autonomia, propõe melhorias, resultado acima da média
+- Domina (D) — faz bem, sempre e é referência: antecipa situações, otimiza recursos, é referência para a equipe
+
+Cargo: [CARGO] | Níveis de senioridade da carreira: [EX: JÚNIOR, PLENO, SÊNIOR] | Principais atribuições/atividades do dia a dia desse cargo: [LISTAR TODAS AS ATRIBUIÇÕES]
+
+Monte a matriz IOCD completa: 1) para cada atribuição listada, defina qual nível (I, O, C ou D) é esperado em cada senioridade, 2) explique brevemente o critério usado para definir esses níveis, 3) aponte quais atribuições são os melhores indicadores para decidir uma promoção de nível, 4) sugira como comunicar essa matriz para a equipe de forma transparente, 5) sugira uma forma simples de o colaborador se autoavaliar nessa matriz antes da avaliação do gestor.`},
+{ theme:'performance', title:'Criação de Planilha de Performance', diff:'INTERMEDIÁRIO', type:'TEMPLATE',
+  desc:'Monta a estrutura de uma planilha de acompanhamento de performance individual ou de equipe.',
+  prompt:`Preciso estruturar uma planilha de performance para acompanhar minha equipe/colaborador.
+
+O que eu preciso acompanhar: [EX: METAS DE VENDA, PRODUTIVIDADE, QUALIDADE, PRESENÇA] | Quantas pessoas serão acompanhadas: [NÚMERO] | Frequência de atualização: [DIÁRIA/SEMANAL/MENSAL]
+
+Monte a estrutura completa: 1) lista de colunas em ordem (nome, indicador, meta, realizado, %, status), com o tipo de dado de cada uma, 2) as fórmulas necessárias para calcular % de atingimento e status automático (ex: verde/amarelo/vermelho), 3) sugestão de uma aba de ranking/comparação entre os colaboradores, 4) sugestão de gráfico(s) para visualizar a evolução ao longo do tempo.`},
+{ theme:'performance', title:'Desenvolvimento do Quartil', diff:'AVANÇADO', type:'ANÁLISE',
+  desc:'Segmenta a equipe em quartis de performance (top, alta, média, baixa) e sugere ação de desenvolvimento específica para cada grupo.',
+  prompt:`Segmente minha equipe em quartis de performance e sugira ações para cada grupo.
+
+Dados de performance da equipe (nome/função e resultado no indicador principal): [LISTAR] | Indicador usado para o ranking: [DESCREVA]
+
+Analise e me entregue: 1) a equipe dividida em 4 quartis (top 25%, segundo quartil, terceiro quartil, quartil inferior) com base no indicador informado, 2) o que caracteriza o desempenho de cada quartil, 3) uma ação de desenvolvimento específica e prática para cada quartil — não a mesma ação para todos, 4) uma recomendação de para qual quartil vale mais a pena investir tempo de gestão agora, e por quê, 5) um alerta se o quartil inferior tiver alguém em risco real de baixa performance recorrente.`},
+{ theme:'performance', title:'Ciclo PDCA Aplicado ao Negócio', diff:'INTERMEDIÁRIO', type:'FRAMEWORK',
+  desc:'Aplica o ciclo PDCA (Planejar, Fazer, Checar, Agir) a um problema ou objetivo real do seu negócio, de forma específica, não genérica.',
+  prompt:`Você é um especialista em melhoria contínua e no ciclo PDCA. Aplique o PDCA ao problema/objetivo abaixo, de forma específica ao meu contexto, não genérica.
+
+Problema ou objetivo: [DESCREVA] | Situação atual: [DESCREVA] | Resultado desejado: [DESCREVA]
+
+Aplique as 4 etapas: 1) Planejar (Plan) — o objetivo específico, a meta numérica, e as causas prováveis do problema atual, 2) Fazer (Do) — as ações concretas para atacar as causas, com responsável e prazo, 3) Checar (Check) — como e quando verificar se as ações estão funcionando, com o indicador exato a acompanhar, 4) Agir (Act) — o que fazer se funcionar (padronizar) e o que fazer se não funcionar (replanejar).
+
+Ao final, monte um cronograma simples de quando cada etapa deve acontecer, para o ciclo não ficar parado no "Planejar".`},
+{ theme:'performance', title:'Avaliação 360', diff:'AVANÇADO', type:'TEMPLATE',
+  desc:'Cria o formulário completo de avaliação 360 graus, com perguntas adaptadas para gestor, pares e subordinados.',
+  prompt:`Crie um formulário de avaliação 360 graus para o colaborador abaixo.
+
+Cargo avaliado: [CARGO] | Competências que quero avaliar: [LISTAR, EX: LIDERANÇA, COMUNICAÇÃO, TRABALHO EM EQUIPE, ENTREGA DE RESULTADOS] | Quem vai responder: [GESTOR, PARES, SUBORDINADOS, O PRÓPRIO COLABORADOR — AJUSTE CONFORME DISPONÍVEL]
+
+Monte: 1) um conjunto de perguntas por competência, adaptadas ao ponto de vista de cada avaliador (a pergunta para o gestor é diferente da pergunta para um par ou subordinado), 2) uma escala de avaliação simples e objetiva, 3) um campo de comentário aberto para cada competência, 4) instruções claras de como cada avaliador deve preencher, garantindo anonimato quando aplicável, 5) um modelo de como consolidar as respostas de todos os avaliadores em um relatório final para o colaborador.`},
+{ theme:'performance', title:'Matriz 9 Box', diff:'AVANÇADO', type:'ANÁLISE',
+  desc:'Posiciona os colaboradores na matriz 9 Box (desempenho x potencial) e sugere ação de gestão para cada posição.',
+  prompt:`Monte a Matriz 9 Box da minha equipe (desempenho x potencial).
+
+Para cada colaborador (use "Colaborador A", "B", etc.): desempenho atual (dados/resultados), sinais de potencial de crescimento, tempo de casa: [LISTAR]
+
+Posicione cada colaborador em um dos 9 quadrantes da matriz (cruzando desempenho: baixo/médio/alto, com potencial: baixo/médio/alto), e para cada um: 1) o quadrante em que se encaixa e por quê, 2) a ação de gestão recomendada para esse quadrante (desenvolver, reter, redirecionar, substituir, promover), 3) o risco de não agir com essa pessoa agora. Ao final, monte um resumo visual em texto da distribuição da equipe pelos 9 quadrantes, e aponte se há um desequilíbrio preocupante — por exemplo, muita gente concentrada no quadrante de baixo desempenho.`},
+{ theme:'performance', title:'Reunião de Calibração de Avaliações', diff:'AVANÇADO', type:'FRAMEWORK',
+  desc:'Estrutura uma reunião de calibração entre gestores para garantir que as avaliações de performance sejam justas e consistentes entre times.',
+  prompt:`Preciso estruturar uma reunião de calibração de avaliações de performance entre gestores, para garantir justiça entre times diferentes.
+
+Nº de gestores participando: [NÚMERO] | Critério de avaliação usado: [DESCREVA] | Problema que já percebi (ex: um gestor é mais rígido que outro): [DESCREVA]
+
+Monte o roteiro da reunião de calibração: 1) como apresentar os casos de forma objetiva, sem virar debate pessoal, 2) perguntas para provocar a calibração quando duas pessoas com desempenho parecido têm notas muito diferentes, 3) como chegar a um consenso sem forçar uma "curva forçada" artificial, 4) como documentar os ajustes feitos na calibração.`},
+{ theme:'performance', title:'Plano de Sucessão para Posições-Chave', diff:'AVANÇADO', type:'FRAMEWORK',
+  desc:'Mapeia o risco de sucessão nas posições mais críticas do negócio e monta um plano para reduzir a dependência de uma única pessoa.',
+  prompt:`Quero mapear o risco de sucessão nas posições mais críticas do meu negócio.
+
+Posições consideradas críticas: [LISTAR] | Para cada uma, existe alguém preparado para assumir hoje: [DESCREVA]
+
+Analise e me entregue: 1) o nível de risco de cada posição (alto/médio/baixo) com base na existência ou não de um sucessor preparado, 2) para as posições de alto risco, o que fazer nos próximos 6 meses para reduzir esse risco, 3) como documentar o conhecimento crítico dessas posições para não depender só da pessoa, 4) um plano de desenvolvimento para os sucessores identificados.`},
+{ theme:'tempo', title:'Priorização com Matriz Eisenhower', diff:'BÁSICO', type:'FRAMEWORK',
+  desc:'Organiza uma lista de tarefas na matriz urgente x importante.',
+  prompt:`Organize minhas tarefas usando a Matriz de Eisenhower.
+
+Minhas tarefas da semana: [LISTAR TODAS] | Meu principal objetivo do mês: [DESCREVA]
+
+Para cada tarefa, classifique em fazer agora / agendar / delegar / eliminar, justifique brevemente, e aponte se alguma tarefa "urgente" na verdade não é importante.`},
+{ theme:'tempo', title:'Organização da Semana em Blocos', diff:'BÁSICO', type:'TEMPLATE',
+  desc:'Distribui as atividades da semana em blocos de tempo protegidos.',
+  prompt:`Me ajude a organizar minha semana em blocos de tempo.
+
+Compromissos fixos: [LISTAR REUNIÕES/HORÁRIOS FIXOS] | Atividades que precisam de foco/concentração: [LISTAR] | Horário de maior energia no dia: [MANHÃ/TARDE]
+
+Monte uma sugestão de distribuição semanal, protegendo blocos para foco no horário de maior energia, e deixando espaço para imprevistos.`},
+{ theme:'tempo', title:'Diagnóstico de Onde o Tempo Está Sendo Perdido', diff:'INTERMEDIÁRIO', type:'ANÁLISE',
+  desc:'Identifica os principais ladrões de tempo na rotina de um gestor.',
+  prompt:`Analise onde meu tempo está sendo mal aproveitado.
+
+Como está minha semana hoje (descreva livremente): [DESCREVA REUNIÕES, INTERRUPÇÕES, TAREFAS REPETITIVAS] | O que eu sinto que deveria ter mais tempo para fazer: [DESCREVA]
+
+Aponte: as 3 causas mais prováveis de perda de tempo, o que é delegável, e uma mudança simples para recuperar tempo essa semana.`},
+{ theme:'tempo', title:'Rotina Ideal de um Gestor', diff:'INTERMEDIÁRIO', type:'FRAMEWORK',
+  desc:'Desenha uma rotina-modelo equilibrando gestão de time, estratégia e execução.',
+  prompt:`Me ajude a desenhar minha rotina ideal como gestor.
+
+Minhas responsabilidades principais: [LISTAR] | Tamanho da equipe: [NÚMERO] | O que hoje toma tempo demais: [DESCREVA]
+
+Proponha uma distribuição semanal entre gestão de pessoas, execução, estratégia e imprevistos, com percentuais aproximados e um exemplo de como isso se traduz em dias da semana.`},
+{ theme:'tempo', title:'Plano de Delegação de Tarefas', diff:'AVANÇADO', type:'FRAMEWORK',
+  desc:'Identifica o que delegar e prepara a transição sem perder qualidade.',
+  prompt:`Me ajude a montar um plano de delegação de tarefas.
+
+Tarefas que hoje faço eu mesmo: [LISTAR] | Pessoas disponíveis para receber tarefas e seu nível de experiência: [DESCREVA]
+
+Para cada tarefa, diga se é delegável agora ou precisa de preparo antes, para quem delegar, o nível de acompanhamento necessário no início, e como vou saber que a pessoa já pode assumir sozinha.`},
+{ theme:'tempo', title:'Agenda Semanal Automática', diff:'BÁSICO', type:'GERAÇÃO',
+  desc:'Gera um modelo de agenda semanal pronto a partir de uma lista de prioridades.',
+  prompt:`Gere um modelo de agenda semanal a partir das minhas prioridades.
+
+Prioridades da semana: [LISTAR EM ORDEM] | Reuniões fixas: [LISTAR COM HORÁRIO] | Horário de trabalho: [INÍCIO-FIM]
+
+Monte uma agenda dia a dia, alocando tempo para cada prioridade, respeitando as reuniões fixas, e deixando ao menos 1 bloco livre por dia para imprevistos.`},
+{ theme:'tempo', title:'Planejamento de Campanha de Marketing', diff:'INTERMEDIÁRIO', type:'FRAMEWORK',
+  desc:'Estrutura a estratégia, o funil, o mix de canais, o budget e o cronograma de uma campanha.',
+  prompt:`Você é um estrategista de marketing digital especializado em planejamento de campanhas para pequenas e médias empresas. Seus princípios: (1) estratégia sem tática é devaneio, tática sem estratégia é ruído — o plano precisa conectar os dois; (2) o canal certo para uma campanha é determinado pelo público, não pela preferência do anunciante; (3) budget pequeno exige foco — melhor dominar 1-2 canais do que estar presente em 5 com performance medíocre; (4) campanha sem critério claro de sucesso não pode ser avaliada.
+
+Objetivo do cliente: [O QUE ELE QUER ALCANÇAR — SEJA ESPECÍFICO]
+Produto/serviço a promover: [DESCRIÇÃO, PREÇO, DIFERENCIAIS]
+Público-alvo: [QUEM DEVE SER ALCANÇADO]
+Budget disponível: [TOTAL DA CAMPANHA E PERÍODO]
+Canais disponíveis/preferidos: [QUAIS CANAIS O CLIENTE JÁ USA OU QUER USAR]
+Prazo: [QUANDO A CAMPANHA DEVE RODAR — INÍCIO E FIM, DATAS CRÍTICAS]
+Histórico de campanhas anteriores: [O QUE JÁ FOI TENTADO E QUAL FOI O RESULTADO]
+Restrições: [LIMITAÇÕES DE ORÇAMENTO, CRIATIVO, APROVAÇÃO, COMPLIANCE]
+
+Entregue:
+1. Estratégia da campanha — objetivo de negócio, ângulo estratégico escolhido, lógica de canal
+2. Estrutura de funil da campanha — como o público será guiado da descoberta à conversão, etapa por etapa
+3. Mix de canais e função de cada um — função no funil, formato, budget alocado, KPI esperado
+4. Distribuição de budget — tabela: canal / budget / % do total / justificativa (com reserva de 10-15% para otimização)
+5. Cronograma de execução — fase a fase, o que precisa estar pronto antes de cada uma
+6. Métricas e critérios de sucesso — KPI principal + secundários por canal, com meta numérica
+7. Riscos e plano de contingência — os 3 principais riscos e o que fazer se cada um acontecer`},
+{ theme:'tempo', title:'Planejamento de Lançamento de Campanha', diff:'AVANÇADO', type:'FRAMEWORK',
+  desc:'Organiza fases, cronograma detalhado e checklist completo para o lançamento de uma campanha.',
+  prompt:`Você é um especialista em planejamento e execução de campanhas de marketing digital para times pequenos de agências e empresas. Seus princípios: (1) lançamento sem plano é imprevisto com data marcada — o cronograma existe para antecipar problemas; (2) cada fase tem uma entrega clara — sem output definido, a fase nunca termina; (3) buffer de 20% no prazo não é pessimismo, é experiência; (4) o sucesso do lançamento é medido antes, durante e depois.
+
+Produto ou serviço a ser lançado: [O QUE SERÁ PROMOVIDO]
+Objetivo do lançamento: [GERAR LEADS, VENDAS, SEGUIDORES, AWARENESS]
+Meta numérica: [EX: 200 LEADS, R$20.000 EM VENDAS, 1.000 NOVOS SEGUIDORES]
+Data de início das campanhas pagas: [QUANDO OS ANÚNCIOS DEVEM ESTAR NO AR]
+Data de hoje: [DATA ATUAL PARA CALCULAR O CRONOGRAMA]
+Orçamento de mídia: [QUANTO SERÁ INVESTIDO EM ANÚNCIOS]
+Canais: [FACEBOOK ADS, INSTAGRAM, GOOGLE, E-MAIL, ORGÂNICO]
+Time disponível: [QUEM ESTÁ ENVOLVIDO E QUAL A FUNÇÃO DE CADA UM]
+Materiais que já existem: [CRIATIVOS PRONTOS, LANDING PAGE, COPY, VÍDEOS]
+O que ainda precisa ser produzido: [O QUE FALTA CRIAR OU REVISAR]
+
+Entregue:
+1. Visão geral do lançamento — resumo em 4 linhas: o que é, quando acontece, meta e estratégia geral
+2. Fases do lançamento — preparação, produção de materiais, configuração técnica, lançamento e ativação, otimização e acompanhamento, fechamento e análise
+3. Cronograma detalhado — tabela: data / atividade / responsável / entrega esperada / status
+4. Checklist de lançamento — verificação completa antes de ativar as campanhas
+5. Plano de contingência — o que fazer se o criativo for reprovado / resultado abaixo da meta nos primeiros 3 dias / orçamento esgotar antes do prazo`},
+{ theme:'tempo', title:'Planejamento Estratégico Anual', diff:'AVANÇADO', type:'FRAMEWORK',
+  desc:'Constrói o planejamento estratégico anual de uma empresa: SWOT, metas, iniciativas e OKRs trimestrais.',
+  prompt:`Você é um consultor estratégico com expertise em planejamento empresarial para PMEs de crescimento. Seus princípios: (1) estratégia sem execução é poesia — todo objetivo precisa de iniciativa, responsável e prazo, (2) metas boas são desafiadoras mas críveis, (3) menos prioridades é mais resultado — empresa com 10 prioridades tem zero, (4) planejamento anual deve ser revisado trimestralmente.
+
+Empresa e setor: [NOME E SEGMENTO]
+Situação atual (ano anterior): [FATURAMENTO, MARGEM, CLIENTES, EQUIPE, CONQUISTAS]
+O que não funcionou no ano anterior: [ERROS, PERDAS, INICIATIVAS QUE FALHARAM]
+Oportunidades de mercado identificadas: [O QUE O MERCADO ESTÁ DEMANDANDO]
+Ameaças e riscos no horizonte: [CONCORRÊNCIA, MUDANÇAS REGULATÓRIAS, MACRO]
+Meta de faturamento para o ano: [VALOR DESEJADO]
+Meta de margem/lucro: [% OU VALOR DESEJADO]
+Outros objetivos importantes: [EX: CONTRATAR EQUIPE, LANÇAR PRODUTO, ENTRAR EM NOVO MERCADO]
+Recursos disponíveis: [CAPITAL, EQUIPE, INFRAESTRUTURA]
+
+Entregue:
+1. Diagnóstico estratégico — SWOT resumido, específico e acionável, não genérico
+2. Visão do ano — uma frase que resume onde a empresa deve estar em 31 de dezembro
+3. Metas anuais (financeiras e operacionais) — de 5 a 8 metas mensuráveis, com indicador, valor atual, meta do ano e responsável
+4. Iniciativas estratégicas prioritárias — as 4-6 grandes iniciativas que vão mover os indicadores, com impacto esperado e trimestre de execução
+5. OKRs por trimestre — 2-3 Objetivos + 2-3 Resultados-Chave mensuráveis para cada trimestre
+6. Calendário estratégico — principais marcos, revisões e eventos do ano`},
+{ theme:'tempo', title:'Planejamento Estratégico de 90 Dias', diff:'BÁSICO', type:'FRAMEWORK',
+  desc:'Cria um plano de 90 dias com prioridades estratégicas, ações semanais e indicadores de acompanhamento.',
+  prompt:`Você é um estrategista de negócios. Seus princípios: (1) foco gera resultado, (2) menos metas, mais execução, (3) clareza estratégica, (4) priorização extrema.
+
+Tipo de negócio: [DESCREVA]
+Situação atual: [EXPLIQUE]
+Objetivo principal: [EXPLIQUE]
+Principais dificuldades: [LISTE]
+
+Entregue:
+1. Diagnóstico do momento atual
+2. 3 prioridades estratégicas
+3. Plano dividido em 90 dias
+4. Ações práticas por semana
+5. Indicadores de acompanhamento`},
+{ theme:'tempo', title:'Diagnóstico de "Dono Preso na Operação"', diff:'AVANÇADO', type:'ANÁLISE',
+  desc:'Diagnostica se você está preso no operacional do negócio, sem tempo para pensar em crescimento — uma das maiores queixas de donos de pequenos negócios.',
+  prompt:`Pesquisas mostram que gestores presos na operação do dia a dia raramente conseguem tempo para pensar em crescimento do negócio. Me ajude a diagnosticar isso na minha rotina.
+
+Como foi minha última semana de trabalho (descreva livremente): [DESCREVA AS ATIVIDADES QUE MAIS TOMARAM TEMPO] | Quanto tempo dediquei a pensar em estratégia/crescimento na semana: [ESTIMATIVA]
+
+Analise e me diga: 1) o quanto do meu tempo está em tarefas operacionais que poderiam ser delegadas, 2) as 3 tarefas que mais me prendem no operacional e para quem elas poderiam ser passadas, 3) um plano realista de 30 dias para recuperar ao menos algumas horas por semana para pensar em estratégia, 4) o que normalmente trava um dono de delegar essas tarefas, e como superar isso no meu caso.`},
+{ theme:'tempo', title:'Rotina Semanal de Foco em Crescimento', diff:'INTERMEDIÁRIO', type:'TEMPLATE',
+  desc:'Reserva um bloco fixo de tempo por semana só para pensar no crescimento do negócio, protegido do operacional.',
+  prompt:`Quero criar uma rotina semanal com um bloco protegido só para pensar em crescimento do negócio, sem deixar o operacional invadir.
+
+Quantas horas por semana consigo reservar: [HORAS] | Melhor dia/horário para mim: [DESCREVA] | Principais frentes de crescimento que preciso pensar: [LISTAR, EX: NOVOS CLIENTES, NOVOS PRODUTOS, PARCERIAS]
+
+Monte: 1) uma agenda fixa semanal para esse bloco, com uma pauta rotativa entre as frentes de crescimento listadas, 2) 3 regras para proteger esse tempo de reuniões e urgências operacionais, 3) um formato simples de registro do que foi decidido em cada sessão, 4) como saber, depois de alguns meses, se essa rotina está realmente gerando avanço.`},
+{ theme:'tempo', title:'Framework de Decisão Rápida para o Dia a Dia', diff:'INTERMEDIÁRIO', type:'FRAMEWORK',
+  desc:'Cria um critério rápido para decidir sozinho as pequenas decisões do dia a dia, sem gastar tempo demais nem procrastinar.',
+  prompt:`Eu gasto tempo demais decidindo coisas pequenas no dia a dia. Me ajude a criar um critério rápido de decisão.
+
+Tipos de decisão pequena que mais me tomam tempo: [LISTAR, EX: RESPONDER PEDIDOS DE DESCONTO, APROVAR PEQUENOS GASTOS, RESOLVER CONFLITOS SIMPLES DA EQUIPE]
+
+Monte um framework de decisão rápida: 1) para cada tipo de decisão listada, um critério objetivo que eu possa aplicar em segundos (ex: "se o valor for menor que X, aprove direto"), 2) o que delegar completamente para outra pessoa decidir, 3) um limite de tempo máximo que eu deveria gastar pensando nesse tipo de decisão, 4) um sinal de alerta de quando uma decisão "pequena" na verdade merece mais reflexão.`},
+{ theme:'tempo', title:'Auditoria de Reuniões', diff:'INTERMEDIÁRIO', type:'ANÁLISE',
+  desc:'Analisa a agenda de reuniões da semana e aponta quais cortar, encurtar ou transformar em mensagem assíncrona.',
+  prompt:`Quero fazer uma auditoria das minhas reuniões da semana para recuperar tempo.
+
+Lista de reuniões da semana (nome, duração, quantas pessoas, objetivo): [LISTAR]
+
+Analise cada reunião e me diga: 1) quais poderiam ser eliminadas, virando uma mensagem/e-mail, 2) quais poderiam ser encurtadas e para quanto tempo, 3) quais realmente precisam continuar como estão e por quê, 4) o tempo total que eu recuperaria por semana se aplicasse essas mudanças.`},
+{ theme:'mentor', title:'Conselho para Decisão Difícil', diff:'INTERMEDIÁRIO', type:'FRAMEWORK',
+  desc:'Ajuda a pensar com clareza antes de tomar uma decisão de gestão importante.',
+  prompt:`Preciso de ajuda para pensar com clareza sobre uma decisão difícil.
+
+Decisão que preciso tomar: [DESCREVA] | Prós que já enxergo: [LISTAR] | Contras/riscos que já enxergo: [LISTAR] | O que está me deixando em dúvida: [DESCREVA]
+
+Me ajude a: 1) identificar o que realmente está em jogo por trás da dúvida, 2) uma pergunta que eu ainda não me fiz, 3) o que eu faria se não tivesse medo de errar, 4) o custo de não decidir agora.`},
+{ theme:'mentor', title:'Simulação de Cenários antes de Decidir', diff:'AVANÇADO', type:'ANÁLISE',
+  desc:'Simula os principais cenários de uma decisão para reduzir o risco de surpresa.',
+  prompt:`Simule os cenários possíveis da decisão abaixo antes de eu decidir.
+
+Decisão: [DESCREVA] | Variáveis que podem mudar o resultado: [LISTAR]
+
+Monte 3 cenários (otimista, provável, pessimista), o que eu faria em cada um, e um sinal de alerta antecipado que me diria que estou indo para o cenário pessimista.`},
+{ theme:'mentor', title:'Plano de Desenvolvimento de Liderança', diff:'AVANÇADO', type:'FRAMEWORK',
+  desc:'Cria um plano pessoal de evolução como líder, com foco nas lacunas reais.',
+  prompt:`Me ajude a montar meu próprio plano de desenvolvimento como líder.
+
+Onde estou hoje como gestor (pontos fortes e fracos, na minha visão): [DESCREVA] | Onde quero chegar nos próximos 12 meses: [DESCREVA]
+
+Sugira: 2 competências de liderança prioritárias para desenvolver, ações práticas para cada uma (não só leitura), e uma forma de eu mesmo avaliar minha evolução a cada trimestre.`},
+{ theme:'mentor', title:'Segunda Opinião sobre uma Escolha de Gestão', diff:'INTERMEDIÁRIO', type:'ANÁLISE',
+  desc:'Funciona como uma segunda opinião crítica sobre uma escolha já quase tomada.',
+  prompt:`Quero uma segunda opinião crítica sobre uma escolha que estou quase tomando.
+
+O que decidi fazer: [DESCREVA] | Por que cheguei a essa decisão: [DESCREVA]
+
+Aja como um conselheiro experiente e cético: aponte 2 pontos cegos que eu talvez não tenha considerado, uma pergunta desconfortável que eu deveria responder antes de seguir, e se a decisão parece precipitada ou bem fundamentada.`},
+{ theme:'mentor', title:'Reflexão Guiada de Fim de Semana', diff:'BÁSICO', type:'FRAMEWORK',
+  desc:'Estrutura uma reflexão semanal curta para tirar aprendizado da semana que passou.',
+  prompt:`Me guie em uma reflexão sobre a minha semana como gestor.
+
+O que aconteceu de mais marcante essa semana (bom e ruim): [DESCREVA]
+
+Me faça 3 perguntas, uma de cada vez, para eu refletir sobre: o que eu aprendi, o que eu faria diferente, e o que eu quero levar de foco para a próxima semana.`},
+{ theme:'mentor', title:'Preparação para Conversa com a Diretoria', diff:'AVANÇADO', type:'FRAMEWORK',
+  desc:'Prepara os argumentos e antecipa objeções antes de uma conversa importante com a diretoria.',
+  prompt:`Preciso me preparar para uma conversa importante com a diretoria.
+
+Assunto: [DESCREVA O QUE VOU APRESENTAR/PEDIR] | O que a diretoria provavelmente vai questionar: [LISTAR SE SOUBER]
+
+Me ajude a: estruturar os 3 argumentos mais fortes a favor, antecipar 2 objeções prováveis e como responder, e definir o que eu não posso deixar de dizer nessa conversa.`},
+{ theme:'mentor', title:'Head Hunter (Análise de Currículo e Entrevista Simulada)', diff:'AVANÇADO', type:'ANÁLISE',
+  desc:'Analisa um currículo, compara com o mercado (salário e atividades) e conduz uma entrevista de emprego simulada com feedback.',
+  prompt:`Você é um headhunter experiente. Vou colar meu currículo (ou de um candidato) para você analisar.
+
+Currículo: [COLE O CURRÍCULO OU DESCREVA A TRAJETÓRIA]
+
+Antes de analisar, me pergunte quais eram as principais atividades exercidas em cada cargo, se não estiver claro no currículo, para poder validar o nível de senioridade real.
+
+Depois que eu responder, você tem acesso à internet — pesquise e apresente um relatório completo com: 1) uma análise crítica do currículo (pontos fortes, pontos fracos, o que está faltando ou mal comunicado), 2) uma pesquisa de mercado sobre a faixa salarial média para esse perfil (mesmo cargo, atividades e senioridade equivalentes), citando as fontes usadas, 3) um benchmarking das atividades desse currículo comparadas ao que o mercado espera para esse cargo hoje (o que está alinhado, o que está defasado, o que falta aprender), 4) uma nota geral de empregabilidade desse currículo hoje, com justificativa.
+
+Ao final, conduza uma entrevista de emprego simulada: faça as perguntas uma de cada vez, como um recrutador real faria, aguarde minha resposta antes de continuar, e ao final me dê um feedback de como fui em cada resposta e o que poderia melhorar.`},
+{ theme:'mentor', title:'"O que faço?" (Conselho Baseado em Casos Reais)', diff:'AVANÇADO', type:'ANÁLISE',
+  desc:'Pesquisa casos reais parecidos com o seu problema e as medidas que outras empresas ou pessoas tomaram, citando as fontes, para embasar sua decisão.',
+  prompt:`Estou diante de uma decisão/problema e quero ver como outros já resolveram situações parecidas antes de decidir.
+
+Meu problema/decisão: [DESCREVA A SITUAÇÃO COM DETALHES] | Setor/contexto do meu negócio: [DESCREVA]
+
+Você tem acesso à internet. Pesquise casos reais (de empresas, gestores ou situações documentadas) que enfrentaram um problema parecido com o meu, e para cada caso encontrado, me traga: 1) um resumo da situação enfrentada, 2) a medida ou decisão que foi tomada, 3) o resultado dessa decisão, se disponível, 4) a fonte de onde veio essa informação (link ou nome da publicação).
+
+Depois de trazer pelo menos 3 casos reais, me dê: 1) os padrões que se repetem entre os casos, 2) o que parece funcionar melhor para situações como a minha, 3) uma recomendação para o meu caso específico, deixando claro o que é baseado nos casos pesquisados e o que é sua análise/inferência.`},
+{ theme:'mentor', title:'Plano de Comunicação de Liderança', diff:'AVANÇADO', type:'FRAMEWORK',
+  desc:'Fortalece a comunicação entre liderança e equipe — apontada como uma das maiores dores de gestão em pesquisas recentes.',
+  prompt:`Pesquisas recentes apontam a comunicação como uma das maiores dores na relação entre liderança e equipe. Me ajude a melhorar minha comunicação como líder.
+
+O que já percebo de falha na minha comunicação: [DESCREVA, EX: SÓ COMUNICO QUANDO ALGO DÁ ERRADO, NÃO EXPLICO O "PORQUÊ" DAS DECISÕES] | Tamanho da equipe: [NÚMERO]
+
+Monte um plano de comunicação de liderança: 1) uma rotina de comunicação regular com a equipe, não só quando há problema, 2) como comunicar decisões difíceis com transparência, 3) como criar espaço para a equipe trazer feedback para mim, não só receber o meu, 4) 3 hábitos de comunicação para eu praticar nas próximas semanas.`},
+{ theme:'mentor', title:'Diagnóstico "Cabeça de Dono"', diff:'AVANÇADO', type:'ANÁLISE',
+  desc:'Avalia se você está pensando e agindo como dono estratégico ou ainda como o melhor funcionário do próprio negócio.',
+  prompt:`Quero um diagnóstico sincero: estou pensando como dono estratégico ou ainda como o "melhor funcionário" do meu próprio negócio?
+
+Como eu descreveria meu dia a dia hoje: [DESCREVA] | Minha maior dificuldade em pensar em crescimento é: [DESCREVA] | Meu negócio depende de mim para funcionar em quais áreas: [DESCREVA]
+
+Me dê um diagnóstico honesto: 1) sinais no que descrevi que indicam que eu ainda estou operando como funcionário, não como dono, 2) as 2 áreas onde meu negócio mais depende de mim pessoalmente, e o risco disso, 3) uma pergunta desconfortável que eu deveria me fazer sobre meu papel no negócio, 4) um primeiro passo prático para começar a agir mais como dono estratégico essa semana.`},
+{ theme:'mentor', title:'Preparação para Negociação Difícil', diff:'AVANÇADO', type:'FRAMEWORK',
+  desc:'Prepara argumentos, contrapartidas e limites antes de uma negociação difícil com sócio, fornecedor, cliente grande ou banco.',
+  prompt:`Preciso me preparar para uma negociação difícil e quero entrar preparado, não reativo.
+
+Com quem é a negociação: [SÓCIO/FORNECEDOR/CLIENTE/BANCO/OUTRO] | O que está em jogo: [DESCREVA] | Meu objetivo ideal: [DESCREVA] | Meu limite mínimo aceitável: [DESCREVA]
+
+Me ajude a preparar: 1) meus 3 argumentos mais fortes, 2) as contrapartidas que eu poderia oferecer se não conseguir o ideal, 3) as objeções ou resistências mais prováveis do outro lado e como responder, 4) o ponto exato em que eu devo estar disposto a sair da mesa sem fechar.`},
+{ theme:'marketing', title:'Campanha Local de Baixo Custo', diff:'BÁSICO', type:'FRAMEWORK',
+  desc:'Monta uma campanha de divulgação local sem depender de grande verba.',
+  prompt:`Crie uma campanha de marketing local de baixo custo.
+
+Negócio: [DESCREVA] | Público-alvo local: [DESCREVA] | Verba disponível: [VALOR OU "BAIXA"]
+
+Sugira: 3 ações de baixo custo (parcerias locais, redes sociais, boca a boca estruturado), uma mensagem-chave da campanha, e uma forma simples de medir se funcionou.`},
+{ theme:'marketing', title:'Post para Redes Sociais da Empresa', diff:'BÁSICO', type:'GERAÇÃO',
+  desc:'Escreve um post pronto para redes sociais a partir de uma ideia solta.',
+  prompt:`Escreva um post para redes sociais a partir da ideia abaixo.
+
+Ideia/assunto: [DESCREVA] | Rede social: [INSTAGRAM/LINKEDIN/FACEBOOK] | Tom da marca: [DESCREVA]
+
+Gere: uma legenda com gancho nas primeiras 2 linhas, o corpo do texto, uma chamada para ação, e uma sugestão de 3 hashtags relevantes.`},
+{ theme:'marketing', title:'Calendário de Conteúdo do Mês', diff:'INTERMEDIÁRIO', type:'TEMPLATE',
+  desc:'Organiza os temas de conteúdo do mês para não depender de inspiração de última hora.',
+  prompt:`Monte um calendário de conteúdo para o mês.
+
+Rede(s) social(is): [LISTAR] | Frequência de postagem: [X VEZES POR SEMANA] | Temas/pilares de conteúdo da marca: [LISTAR]
+
+Organize um calendário com data, tema, formato (foto/vídeo/carrossel) e objetivo de cada post (vender, engajar, educar), distribuindo os pilares ao longo do mês.`},
+{ theme:'marketing', title:'Comunicação de Lançamento de Produto', diff:'INTERMEDIÁRIO', type:'GERAÇÃO',
+  desc:'Estrutura a comunicação de um lançamento em fases, não só um post único.',
+  prompt:`Crie a comunicação de lançamento de um novo produto/serviço.
+
+Produto: [DESCREVA] | Diferencial principal: [DESCREVA] | Data de lançamento: [DATA]
+
+Estruture em 3 fases: teaser (antes do lançamento, gerando curiosidade), lançamento (o anúncio principal), e reforço (depoimentos/resultados após o lançamento), com uma mensagem-chave para cada fase.`},
+{ theme:'marketing', title:'Mensagem de Divulgação para Base de Clientes', diff:'BÁSICO', type:'GERAÇÃO',
+  desc:'Escreve uma mensagem direta para divulgar uma novidade para clientes já existentes.',
+  prompt:`Escreva uma mensagem para divulgar uma novidade para minha base de clientes.
+
+Novidade: [DESCREVA] | Canal: [WHATSAPP/E-MAIL/SMS] | Benefício direto para quem já é cliente: [DESCREVA]
+
+A mensagem deve ser curta, ir direto ao benefício para o cliente (não para a empresa), e ter uma única chamada para ação clara.`},
+{ theme:'marketing', title:'Plano de Fortalecimento de Marca Local', diff:'AVANÇADO', type:'FRAMEWORK',
+  desc:'Estrutura um plano de médio prazo para a marca ser mais lembrada na região.',
+  prompt:`Monte um plano de fortalecimento de marca local para os próximos 6 meses.
+
+Negócio: [DESCREVA] | Como a marca é vista hoje na região (se souber): [DESCREVA] | Concorrentes locais: [LISTAR]
+
+Estruture: o posicionamento que queremos reforçar, 3 iniciativas ao longo dos 6 meses (parcerias, presença em eventos locais, conteúdo), e como medir se a marca está mais lembrada ao final do período.`},
+{ theme:'marketing', title:'Posicionamento do Negócio (Produto ou Serviço)', diff:'BÁSICO', type:'FRAMEWORK',
+  desc:'Define posicionamento claro, proposta de valor e diferencial competitivo do seu produto ou serviço.',
+  prompt:`Você é um estrategista de posicionamento. Seus princípios: (1) clareza vence complexidade, (2) quem fala com todos não conecta com ninguém, (3) valor percebido importa, (4) diferenciação é essencial.
+
+O que você faz: [DESCREVA]
+Para quem: [PÚBLICO]
+Problema que resolve: [EXPLIQUE]
+Resultado que entrega: [EXPLIQUE]
+
+Baseado no material que você já conhece sobre o meu negócio, entregue:
+1. Posicionamento claro
+2. Proposta de valor
+3. Diferencial competitivo
+4. Frases-chave de comunicação
+5. Como se comunicar melhor`},
+{ theme:'marketing', title:'Posicionamento para Consultor & Profissional Liberal', diff:'AVANÇADO', type:'FRAMEWORK',
+  desc:'Constrói o posicionamento de alto nível de um consultor/especialista, do diagnóstico ao ponto de vista diferenciado (POV).',
+  prompt:`Você é um estrategista de posicionamento para consultores e especialistas de alto nível. Seus princípios: (1) nicho — quanto mais específico, mais atraente para quem é ideal, (2) posicionamento não é o que você FAZ, é o que o cliente GANHA com você que não ganharia com mais ninguém, (3) o ponto de vista diferenciado (POV) é o ativo mais valioso de um especialista — é o que não pode ser copiado, (4) mensagem clara é mais poderosa que portfólio extenso.
+
+Responda as perguntas abaixo para construir o posicionamento:
+
+Sobre você e sua trajetória:
+- O que você faz, há quanto tempo e de onde vem sua autoridade no assunto: [RESPONDA]
+- Quais resultados concretos já gerou para clientes (com números, se possível): [RESPONDA]
+- O que você faz que a maioria dos consultores da sua área NÃO faz (ou faz pior): [RESPONDA]
+
+Sobre seus clientes:
+- Quem são seus melhores clientes hoje (perfil, área, momento do negócio): [RESPONDA]
+- Qual é o problema que eles chegam até você querendo resolver: [RESPONDA]
+- Qual é o problema REAL que você identifica por trás do que eles pedem: [RESPONDA]
+- Qual resultado eles obtêm depois de trabalhar com você: [RESPONDA]
+
+Sobre o mercado:
+- Quem são seus principais concorrentes e como eles se posicionam: [RESPONDA]
+- O que eles prometem que você acha superficial ou mal executado: [RESPONDA]
+- Qual é a crença comum no seu mercado que você DISCORDA: [RESPONDA]
+
+Entregue:
+1. Diagnóstico do posicionamento atual — o que está forte, o que está genérico e qual é o principal risco do posicionamento atual
+2. Nicho estratégico recomendado — a interseção entre o que você faz de melhor, quem mais se beneficia e onde há menos concorrência
+3. Avatar ideal refinado — perfil detalhado do cliente ideal, não só demográfico, mas psicográfico: o que pensa, teme, deseja e como toma decisão
+4. Sua Promessa Única (Unique Value Proposition) — 1-2 frases que capturam o que você entrega de diferente, para quem e qual resultado, de forma específica e verificável
+5. Ponto de Vista Diferenciado (POV) — sua crença central sobre o mercado que vai contra o senso comum, o que cria seguidores fiéis e clientes que pagam pelo seu jeito de pensar
+6. Mensagem central (para bio, pitch e conteúdo) — 3 versões: 1 frase (bio), 3 frases (pitch verbal), 1 parágrafo (sobre mim do site)
+7. Temas de conteúdo derivados do posicionamento — 5 pilares de conteúdo, cada um com 3 exemplos de post`},
+{ theme:'marketing', title:'Segmentação de Público para Anúncios (Meta Ads e Google Ads)', diff:'AVANÇADO', type:'FRAMEWORK',
+  desc:'Mapeia públicos frio/morno/quente, configuração de segmentação e estratégia de lookalike para campanhas pagas.',
+  prompt:`Você é um especialista em segmentação de público e estratégia de audiência para Meta Ads e Google Ads. Seus princípios: (1) público frio, morno e quente precisam de abordagens diferentes — mesmo produto, mensagens e criativos distintos; (2) exclusões são tão importantes quanto inclusões — público sem exclusão adequada desperdiça impressões em quem já converteu ou nunca vai converter; (3) lookalike de qualidade depende da qualidade da semente — 100 compradores reais são melhores que 10.000 visitantes de site para criar lookalike; (4) estratégia de audiência deve evoluir com o volume de dados.
+
+Produto/oferta: [O QUE SERÁ ANUNCIADO E O TICKET]
+Público-alvo geral: [QUEM VOCÊ QUER ATINGIR]
+Canal principal: [META ADS / GOOGLE ADS / AMBOS]
+Budget diário: [QUANTO VAI INVESTIR POR DIA]
+Dados disponíveis: [PIXEL INSTALADO? LISTA DE CLIENTES? BASE DE E-MAIL? SEGUIDORES? QUANTOS COMPRADORES HISTÓRICOS?]
+Objetivo da campanha: [LEAD, VENDA, AWARENESS]
+Localização: [NACIONAL, REGIONAL, CIDADE ESPECÍFICA]
+
+Entregue:
+1. Mapa de Audiências por Temperatura — públicos frio (nunca interagiu), morno (visitantes do site, engajamento, lista de e-mails) e quente (visitantes da página de vendas, abandonadores de carrinho, leads que não compraram). Para cada público: nome, configuração exata, tamanho estimado, temperatura.
+2. Configuração Detalhada por Público (Meta Ads) — interesses/comportamentos/fontes exatos para configurar no Gerenciador, exclusões aplicadas, tipo de correspondência.
+3. Estratégia de Lookalike — quais seeds usar, em qual porcentagem iniciar (1%, 3%, 5%), quando e como expandir.
+4. Lógica de Exclusão — o que excluir de cada público para evitar sobreposição e desperdício.
+5. Estrutura de Conjuntos de Anúncios — quantos conjuntos, qual público em cada um, budget por conjunto.
+6. Escalonamento — como evoluir a segmentação conforme o volume de dados cresce (30, 60, 90 dias).`},
+{ theme:'marketing', title:'Construção da sua Esteira de Produtos', diff:'AVANÇADO', type:'GERAÇÃO',
+  desc:'Analisa um PDF/material seu (livro, curso, e-book) e constrói uma esteira completa de produtos — de isca digital a high ticket — pronta para vender.',
+  prompt:`Você é um especialista sênior que atua na construção de produtos e serviços de alta performance. A partir deste momento, sua função é analisar profundamente o PDF anexado e, com base exclusivamente nas informações, conhecimentos, métodos, posicionamento, público, problemas, soluções e oportunidades identificadas no documento, construir uma esteira completa de produtos digitais pronta para ser implementada e vendida.
+
+PROJETO SOLICITADO: analisar integralmente o PDF fornecido [ANEXE O PDF] e transformar o conhecimento contido nele em uma esteira estratégica de produtos composta por: 1) iscas digitais, 2) produtos low ticket, 3) produto principal (core business), 4) produtos high ticket — criando uma jornada lógica de evolução, do primeiro contato gratuito até a oferta de maior valor.
+
+OBJETIVO FINAL: entregar uma arquitetura completa de produtos, ofertas e monetização, conectada ao conteúdo do PDF, contendo: diagnóstico do conhecimento e ativos disponíveis; público-alvo mais promissor; problemas, desejos, objeções e níveis de consciência do público; oportunidades de transformação que podem virar produtos; posicionamento central; proposta de valor; mecanismo único/metodologia proprietária; esteira completa de produtos; estratégia de aquisição, conversão, ascensão e retenção; nomes, promessas, formatos, preços sugeridos e argumentos de venda; plano prático de implementação.
+
+FONTE PRINCIPAL: o PDF anexado é a fonte obrigatória. Analise títulos, capítulos, conceitos, métodos, histórias, exemplos, estudos de caso, frameworks, processos, linguagem, dores, soluções, promessas, público citado, diferenciais e possíveis ativos intelectuais. Não substitua o conteúdo do PDF por recomendações genéricas — preserve a terminologia e o nível de profundidade encontrados. Quando uma conclusão vier diretamente do PDF, identifique como "Evidência do PDF"; quando for interpretação estratégica, identifique como "Inferência estratégica"; quando faltar informação, declare a lacuna e adote uma "Premissa adotada".
+
+MODO DE EXECUÇÃO: trabalhe em português do Brasil. Antes de começar, envie apenas "Recebido" e prossiga imediatamente com a análise completa. Não faça perguntas, exceto se o PDF estiver ilegível, corrompido, vazio ou inacessível. Quando houver lacunas não críticas, assuma premissas razoáveis, registre-as e avance.
+
+PLANEJAMENTO: antes de apresentar a solução, crie um plano com: 1) leitura e mapeamento do PDF, 2) extração dos ativos intelectuais, 3) identificação do mercado e público, 4) diagnóstico das dores e oportunidades, 5) definição da transformação central, 6) construção da jornada do cliente, 7) criação da esteira de produtos, 8) precificação e empacotamento, 9) criação das ofertas, 10) definição do funil, 11) estratégia de conteúdo e aquisição, 12) plano de implementação, 13) revisão estratégica final. Depois, execute todas as etapas.
+
+ENTREGÁVEIS OBRIGATÓRIOS: 1) resumo executivo, 2) raio-X do PDF (com matriz de elemento identificado / evidência / localização aproximada / relevância comercial / aplicação em produto), 3) mapa dos ativos intelectuais, 4) público-alvo (persona principal + até 3 personas se houver diferença comercial relevante), 5) posicionamento (categoria, nicho, promessa central, mecanismo único, nome do método, pitch de 30s), 6) jornada de transformação em etapas, 7) no mínimo 5 iscas digitais (nome, promessa, formato, CTA, próxima oferta, 5 títulos alternativos), 8) no mínimo 3 produtos low ticket (nome, promessa, módulos, bônus, preço sugerido, order bump, upsell), 9) um core business completo (nome + 10 alternativas, método, módulos, preço, garantia, FAQ, headline, estrutura de página de vendas, roteiro de VSL), 10) no mínimo 3 ofertas high ticket (mentoria/consultoria/mastermind — escopo, entregáveis, preço, processo de vendas), 11) modelo de recorrência quando fizer sentido, 12) mapa visual da esteira completa (conteúdo → isca → low ticket → core business → high ticket → recorrência), 13) simulação financeira em 3 cenários (conservador, provável, otimista — deixando claro que é projeção ilustrativa), 14) funil de aquisição e vendas completo, 15) pilares de conteúdo e ideias derivadas, 16) materiais de venda prontos (headline, bio, sequência de 7 e-mails, sequência de 5 mensagens de WhatsApp, FAQ), 17) plano de implementação em fases (7 dias / 30 dias / 31-60 / 61-90 / 6 meses), 18) métricas de acompanhamento, 19) riscos e plano de validação enxuta (entrevistas, pré-venda, produto piloto, critérios para continuar/ajustar/abandonar), 20) recomendação estratégica final.
+
+Não entregue sugestões vagas como "crie um curso" ou "produza um e-book" — defina exatamente o que será criado, para quem, qual problema resolve, como será entregue, quanto pode custar e como se conecta ao próximo nível da esteira. Não use depoimentos inventados como reais — quando sugerir provas sociais ainda não existentes, identifique-as como elementos a coletar futuramente. Ao final, apresente: o que foi entregue, a esteira recomendada, o produto que deve ser criado primeiro, a primeira oferta a validar, as três ações prioritárias, o principal risco e a recomendação estratégica final. Não finalize com perguntas abertas.`},
+{ theme:'marketing', title:'Low Ticket (Estratégia de Tripwire)', diff:'INTERMEDIÁRIO', type:'FRAMEWORK',
+  desc:'Cria a estratégia completa de um produto de baixo custo (tripwire) para transformar leads em compradores.',
+  prompt:`Você é um estrategista de funil que domina a técnica do tripwire — a oferta irresistível de baixo custo cujo objetivo principal não é lucro, mas transformar leads em compradores. Você sabe que: (1) quem já comprou tem 10x mais chance de comprar de novo, (2) o tripwire deve ser tão bom que o cliente pensa "se isso custa R$17, imagina o produto completo", (3) o preço deve ser baixo o suficiente para decisão impulsiva mas alto para filtrar curiosos, (4) resolve uma parte específica do problema que o produto principal resolve por completo.
+
+Produto principal: [DESCREVA]
+Preço do produto principal: [VALOR]
+Lead magnet atual: [O QUE O LEAD RECEBE GRÁTIS]
+Público-alvo: [QUEM SÃO OS LEADS]
+Problema que o produto principal resolve: [A GRANDE TRANSFORMAÇÃO]
+Canais de venda: [PÁGINA DE OBRIGADO, E-MAIL, ANÚNCIO]
+
+Entregue:
+1. Conceito do tripwire — tipo de produto + o que recebe + por que é irresistível
+2. Posicionamento e preço — preço + valor percebido + comparação + margem
+3. Nome e título — 5 opções
+4. Copy da oferta — headline, bullets, urgência, CTA, garantia
+5. Onde apresentar — thank you page | e-mail | retargeting (copy para cada)
+6. Order bump / upsell pós-tripwire
+7. Sequência pós-compra — e-mail de entrega + valor + ponte para o produto principal
+8. Métricas do tripwire — taxa esperada + breakeven + projeção`},
+{ theme:'marketing', title:'Análise Competitiva de Mercado', diff:'AVANÇADO', type:'ANÁLISE',
+  desc:'Mapeia o posicionamento dos concorrentes, os padrões de comunicação do mercado e as lacunas para se diferenciar.',
+  prompt:`Você é um estrategista de marketing e especialista em análise competitiva, com experiência em identificar oportunidades de posicionamento que diferenciam marcas em mercados saturados. Seus princípios: (1) mercado saturado de produto raramente é saturado de posicionamento — a lacuna está na mensagem, não no produto; (2) copiar o que o líder faz é garantia de segundo lugar; (3) o melhor posicionamento não é "somos melhores" — é "somos os únicos que fazem X para Y"; (4) análise competitiva de anúncios revela mais sobre o que funciona no mercado do que qualquer pesquisa de desk.
+
+Mercado/nicho: [EX: CURSOS DE INGLÊS ONLINE, CLÍNICAS DE ESTÉTICA, SOFTWARE B2B DE RH]
+Produto do cliente: [O QUE ESTÁ SENDO VENDIDO]
+Principais concorrentes: [LISTE 3-5 CONCORRENTES DIRETOS COM LINKS SE POSSÍVEL]
+Diferenciais do produto do cliente: [O QUE O CLIENTE TEM QUE OS OUTROS NÃO TÊM]
+Contexto atual: [O QUE JÁ SE SABE SOBRE O MERCADO — SATURAÇÃO, SAZONALIDADE, TENDÊNCIAS]
+
+Entregue:
+1. Mapa de posicionamento dos concorrentes — para cada um: proposta de valor central, público que atacam, ângulo principal de copy, preço praticado e ponto fraco percebido
+2. Padrões de comunicação do mercado — o que todo mundo está dizendo (saturado) e o que ninguém está dizendo (a oportunidade)
+3. Análise de anúncios da concorrência — tipos de criativos, ganchos mais comuns, CTAs frequentes, formatos predominantes
+4. Lacunas de mercado identificadas — públicos sub-atendidos, dores não endereçadas, ângulos de copy não explorados
+5. Recomendação de posicionamento — como ocupar o espaço em branco com proposta de valor diferenciada
+6. Hipóteses de campanha baseadas na análise — 3-5 ângulos de anúncio que podem funcionar por ir contra o padrão do mercado`},
+{ theme:'marketing', title:'Pesquisa de Nicho', diff:'INTERMEDIÁRIO', type:'ANÁLISE',
+  desc:'Constrói o perfil de um nicho ou micronicho: dores, gatilhos de compra, onde encontrá-los e a linguagem que usam.',
+  prompt:`Você é um especialista em pesquisa de mercado e desenvolvimento de nichos e micronichos. Seus princípios: (1) descobrir o nicho específico converte mais; (2) procure a dor específica do segmento — cada nicho tem problemas particulares; (3) descubra o ICP ideal para o produto/serviço, incluindo o canal certo para a mensagem certa; (4) use a linguagem do nicho — as palavras que eles usam, não termos técnicos.
+
+Nicho a pesquisar: [DESCREVA OS NICHOS QUE VOCÊ JÁ TRABALHA]
+Por que você quer atender esse nicho: [EX: JÁ TEM ALGUNS CLIENTES DESSE TIPO / ACHA QUE TÊM DORES ESPECÍFICAS]
+O que já sabe sobre esse público: [DESCREVA O QUE CONHECE, MESMO QUE POUCO]
+
+Entregue:
+1. Perfil do nicho — dossiê completo da persona, avatar e ajuda a montar o ICP
+2. Principais dores do segmento — de 5 a 7 problemas específicos, na linguagem deles
+3. Gatilhos de compra — o evento ou momento específico que faz alguém buscar ajuda
+4. Onde encontrá-los — plataformas, comunidades, grupos, eventos, hashtags
+5. Linguagem e termos que usam — para o conteúdo e a prospecção
+6. Abordagem recomendada — tom, ângulo, argumento principal, e o que NÃO dizer
+7. Top 3 serviços mais procurados por esse nicho — em ordem de prioridade`},
+{ theme:'marketing', title:'Pesquisa e Perfil de Avatar (Público-Alvo)', diff:'INTERMEDIÁRIO', type:'ANÁLISE',
+  desc:'Cria o perfil completo do avatar — demográfico, psicográfico, dores em camadas, desejos e objeções traduzidas.',
+  prompt:`Você é um especialista em pesquisa de mercado e desenvolvimento de personas. Seus princípios: (1) avatar não é dado demográfico — é mapa emocional, (2) a linguagem que o cliente usa para descrever a própria dor é o melhor copy que existe — sua tarefa é encontrá-la, (3) objeção não é resistência — é informação sobre o que o cliente ainda não entendeu ou não acredita, (4) quem tenta falar com todo mundo não fala com ninguém — nicho específico converte mais.
+
+Minha especialidade e serviço: [DESCREVA]
+Clientes que já tenho (descreva os melhores): [QUEM SÃO OS CLIENTES COM QUEM O TRABALHO FLUI MELHOR]
+Clientes que você NÃO quer atender: [PERFIL PROBLEMÁTICO OU DESALINHADO]
+Faixa de preço do seu serviço: [PARA INFERIR PODER AQUISITIVO DO AVATAR]
+Onde seu cliente ideal provavelmente está: [INSTAGRAM, LINKEDIN, GOOGLE, INDICAÇÃO, ETC.]
+O que você já observou sobre o comportamento deles: [COMPORTAMENTOS, DÚVIDAS RECORRENTES, OBJEÇÕES QUE APARECEM]
+
+Entregue:
+1. Perfil demográfico — idade, gênero, localização, escolaridade, renda estimada, ocupação
+2. Perfil psicográfico — valores, crenças, estilo de vida, medos mais profundos, desejos mais íntimos
+3. A dor central (em 3 camadas) — dor superficial (o sintoma), dor real (o problema de verdade), dor emocional (o que isso faz sentir)
+4. O desejo central (em 3 camadas) — o que ele diz que quer, o que realmente quer, o que sonha mas não fala
+5. Objeções mais comuns (com tradução) — as 5 principais, com o que está por trás de cada uma
+6. A linguagem do avatar — frases reais que esse cliente provavelmente usa, para usar direto no copy
+7. Onde e como ele toma decisão de compra — o caminho desde descobrir você até contratar, com os pontos de contato críticos`},
+{ theme:'marketing', title:'Pesquisa de Satisfação e Conhecimento do Cliente', diff:'INTERMEDIÁRIO', type:'TEMPLATE',
+  desc:'Cria uma pesquisa curta para entender melhor quem é seu cliente e o que ele realmente pensa do seu negócio.',
+  prompt:`Quero entender melhor quem é meu cliente e o que ele pensa do meu negócio, sem fazer uma pesquisa longa que ninguém responde.
+
+O que mais preciso descobrir sobre meu cliente: [DESCREVA] | Canal para aplicar a pesquisa: [WHATSAPP/E-MAIL/PRESENCIAL]
+
+Monte uma pesquisa de no máximo 5 perguntas: 1) perguntas objetivas que revelem o perfil e a satisfação do cliente, 2) uma pergunta aberta para captar algo que eu não esperava, 3) uma forma de incentivar a resposta sem parecer chato ou insistente, 4) como interpretar os resultados e transformar em uma ação prática.`},
+{ theme:'marketing', title:'Validação de Nova Ideia de Produto/Serviço', diff:'AVANÇADO', type:'ANÁLISE',
+  desc:'Testa se uma nova ideia de produto/serviço tem demanda real antes de investir tempo e dinheiro para lançá-la.',
+  prompt:`Tenho uma ideia de novo produto/serviço e quero validar se faz sentido antes de investir em lançá-la.
+
+Ideia: [DESCREVA] | Para quem seria: [DESCREVA] | Problema que resolveria: [DESCREVA] | Quanto já sei se as pessoas realmente querem isso: [DESCREVA OU "NÃO SEI AINDA"]
+
+Me ajude a validar: 1) as perguntas que eu deveria fazer para clientes reais antes de lançar, 2) uma forma barata de testar a demanda antes de produzir em escala (ex: pré-venda, MVP, lista de espera), 3) os sinais que indicariam que devo seguir em frente, 4) os sinais que indicariam que devo repensar ou abandonar a ideia.`},
+{ theme:'marketing', title:'Plano de Fidelização por Programa de Indicação', diff:'INTERMEDIÁRIO', type:'FRAMEWORK',
+  desc:'Estrutura um programa simples de indicação para transformar clientes satisfeitos em fonte de novos clientes.',
+  prompt:`Quero criar um programa de indicação simples para meus clientes atuais trazerem novos clientes.
+
+Produto/serviço: [DESCREVA] | O que eu poderia oferecer como recompensa pela indicação: [DESCREVA OU "NÃO SEI"] | Canal de contato com os clientes: [DESCREVA]
+
+Monte o programa: 1) a mecânica simples de como funciona (quem indica, o que o indicado precisa fazer, quando a recompensa é liberada), 2) uma sugestão de recompensa que não corroa minha margem, 3) uma mensagem pronta para convidar os clientes a participar, 4) como divulgar o programa sem parecer que estou implorando por indicação.`},
+{ theme:'revisor', title:'Revisão de Texto para Clareza e Tom', diff:'BÁSICO', type:'ANÁLISE',
+  desc:'Revisa um texto para ficar mais claro e no tom certo, sem perder a intenção original.',
+  prompt:`Revise o texto abaixo para clareza e tom.
+
+Texto: [COLE O TEXTO]
+Tom desejado: [FORMAL/INFORMAL/EMPÁTICO/DIRETO]
+Público que vai ler: [DESCREVA]
+
+Reescreva mantendo a intenção original, cortando trechos confusos ou redundantes, e aponte brevemente o que foi ajustado e por quê.`},
+{ theme:'revisor', title:'Revisão de Contrato em Linguagem Simples', diff:'AVANÇADO', type:'ANÁLISE',
+  desc:'Traduz cláusulas contratuais complexas para linguagem simples, sinalizando pontos de atenção.',
+  prompt:`Analise o trecho de contrato abaixo e explique em linguagem simples.
+
+Trecho do contrato: [COLE O TRECHO]
+
+Explique o que essa cláusula significa na prática, aponte se há algo que pareça desfavorável para o meu lado (sem que eu tenha dito qual é meu lado — pergunte se necessário), e sinalize claramente que isso não substitui a revisão de um advogado.`},
+{ theme:'revisor', title:'Revisão de E-mail Antes de Enviar', diff:'BÁSICO', type:'ANÁLISE',
+  desc:'Faz uma checagem rápida de tom e clareza antes de um e-mail importante ser enviado.',
+  prompt:`Revise este e-mail antes de eu enviar.
+
+E-mail: [COLE O TEXTO]
+Contexto/destinatário: [DESCREVA PARA QUEM É E POR QUÊ]
+
+Aponte se o tom está adequado para o destinatário, se falta alguma informação essencial, se algum trecho pode soar mal-interpretado, e sugira a versão final revisada.`},
+{ theme:'revisor', title:'Padronização de Documentos Internos', diff:'INTERMEDIÁRIO', type:'TEMPLATE',
+  desc:'Cria um padrão de estrutura e tom para documentos internos da empresa.',
+  prompt:`Me ajude a criar um padrão para os documentos internos da empresa (comunicados, memorandos, atas).
+
+Tipos de documento mais comuns: [LISTAR] | Tom da empresa: [DESCREVA]
+
+Defina uma estrutura fixa para cada tipo de documento (o que sempre deve conter, em que ordem), e um guia rápido de tom (o que evitar, o que priorizar).`},
+{ theme:'revisor', title:'Revisão de Proposta Comercial', diff:'INTERMEDIÁRIO', type:'ANÁLISE',
+  desc:'Revisa uma proposta comercial já escrita para deixá-la mais persuasiva e sem furos.',
+  prompt:`Revise a proposta comercial abaixo.
+
+Proposta: [COLE O TEXTO]
+Cliente/contexto: [DESCREVA]
+
+Aponte: se o valor está claro antes do preço, se falta alguma objeção comum sendo endereçada, se o texto está longo ou repetitivo em algum trecho, e sugira ajustes específicos.`},
+{ theme:'revisor', title:'Checagem de Tom em Comunicado Sensível', diff:'AVANÇADO', type:'ANÁLISE',
+  desc:'Revisa um comunicado delicado (corte, mudança, crise) para reduzir o risco de má interpretação.',
+  prompt:`Revise este comunicado sensível antes de eu enviar para a equipe/clientes.
+
+Comunicado: [COLE O TEXTO]
+Situação delicada por trás da mensagem: [DESCREVA BREVEMENTE]
+
+Aponte se o tom está empático sem soar evasivo, se algum trecho pode gerar pânico ou desconfiança desnecessária, se falta transparência em algum ponto importante, e sugira a versão final.`},
+{ theme:'revisor', title:'Resumir PDF', diff:'BÁSICO', type:'ANÁLISE',
+  desc:'Resume o conteúdo de um PDF nos pontos essenciais, sem enrolação.',
+  prompt:`Resuma o conteúdo do PDF anexado.
+
+PDF: [ANEXE O PDF] | Nível de detalhe desejado: [RESUMO CURTO / RESUMO COMPLETO] | Para que vou usar esse resumo: [DESCREVA]
+
+Entregue: 1) um resumo executivo de 3 a 5 frases, 2) os principais pontos do documento em tópicos, 3) qualquer dado, prazo ou número importante que não pode passar despercebido, 4) uma recomendação de ação, se o conteúdo pedir alguma.`},
+{ theme:'revisor', title:'Elaboração de E-mail para Cobrar', diff:'BÁSICO', type:'GERAÇÃO',
+  desc:'Pergunta o que você precisa cobrar e o tom desejado, e escreve um e-mail de cobrança profissional.',
+  prompt:`Preciso escrever um e-mail de cobrança.
+
+Antes de escrever, me pergunte: 1) o que exatamente você precisa cobrar (pagamento, entrega, resposta, documento, etc.), 2) qual o tom da cobrança (mais leve/lembrete, neutro/formal, ou mais firme porque já é reincidente), 3) há algum prazo ou consequência que precisa ser mencionado.
+
+Depois que eu responder, escreva o e-mail completo (assunto + corpo), mantendo profissionalismo mesmo no tom mais firme — sem ser rude, sem soar passivo-agressivo, direto ao ponto, com uma chamada clara para ação e prazo.`},
+{ theme:'revisor', title:'Revisão de Regras Gramaticais e Ortografia', diff:'BÁSICO', type:'ANÁLISE',
+  desc:'Revisa um texto focando exclusivamente em gramática, ortografia e pontuação, sem alterar o estilo ou o conteúdo.',
+  prompt:`Revise o texto abaixo apenas quanto à gramática, ortografia e pontuação — sem alterar o estilo, o tom ou o conteúdo.
+
+Texto: [COLE O TEXTO]
+
+Entregue: 1) o texto corrigido na íntegra, 2) uma lista dos erros encontrados (o que estava errado e a correção), 3) se houver dúvida de regra gramatical relevante, uma explicação breve do porquê da correção.`},
+{ theme:'revisor', title:'Revisão de Contrato Antes de Assinar', diff:'AVANÇADO', type:'ANÁLISE',
+  desc:'Faz uma leitura de atenção em um contrato antes de você assinar, destacando cláusulas de risco em linguagem simples.',
+  prompt:`Vou colar um contrato que preciso assinar. Quero uma leitura de atenção antes de assinar.
+
+Contrato: [COLE O TEXTO OU OS TRECHOS PRINCIPAIS] | Tipo de contrato: [EX: PRESTAÇÃO DE SERVIÇO, LOCAÇÃO, SOCIETÁRIO, FORNECEDOR]
+
+Analise e me diga, em linguagem simples: 1) as cláusulas que merecem atenção especial (multa, rescisão, reajuste, exclusividade), 2) o que cada uma dessas cláusulas significa na prática para mim, 3) se há algo que pareça desequilibrado a meu favor ou contra mim, 4) perguntas que eu deveria fazer antes de assinar.
+
+Esta análise não substitui a revisão de um advogado.`},
+{ theme:'leitor', title:'Resumo de Contrato em PDF', diff:'INTERMEDIÁRIO', type:'ANÁLISE',
+  desc:'Resume um contrato em PDF nos pontos que realmente importam para a decisão.',
+  prompt:`Resuma o conteúdo do contrato/documento abaixo nos pontos essenciais.
+
+Conteúdo (cole o texto extraído do PDF): [COLE AQUI]
+
+Destaque: prazo de vigência, valores envolvidos, principais obrigações de cada parte, e qualquer cláusula de multa/rescisão. Sinalize que isso não substitui revisão jurídica.`},
+{ theme:'leitor', title:'Extração de Pontos-Chave de um Relatório', diff:'BÁSICO', type:'ANÁLISE',
+  desc:'Extrai o que realmente importa de um relatório longo, sem eu precisar ler tudo.',
+  prompt:`Extraia os pontos-chave do relatório abaixo.
+
+Conteúdo do relatório: [COLE O TEXTO]
+
+Liste: 3 principais conclusões, 2 números que mais chamam atenção, e 1 recomendação ou próximo passo que o relatório sugere (se houver).`},
+{ theme:'leitor', title:'Resumo de Caixa de E-mail do Dia', diff:'BÁSICO', type:'ANÁLISE',
+  desc:'Organiza um conjunto de e-mails do dia por urgência e assunto.',
+  prompt:`Organize os e-mails abaixo por urgência e assunto.
+
+E-mails (cole o assunto e um resumo de cada um): [COLE AQUI]
+
+Separe em: precisa de resposta hoje, pode esperar, e só para conhecimento. Para os urgentes, sugira uma resposta curta.`},
+{ theme:'leitor', title:'Identificação de Pendências em E-mails', diff:'INTERMEDIÁRIO', type:'ANÁLISE',
+  desc:'Varre uma troca de e-mails e lista o que ficou pendente de resposta ou ação.',
+  prompt:`Analise a troca de e-mails abaixo e identifique o que ficou pendente.
+
+Troca de e-mails: [COLE A CONVERSA]
+
+Liste: o que ainda não foi respondido, quem deveria responder, e qualquer compromisso/prazo mencionado que ainda não foi cumprido.`},
+{ theme:'leitor', title:'Resumo de Ata de Reunião a partir de PDF', diff:'BÁSICO', type:'GERAÇÃO',
+  desc:'Transforma anotações soltas de reunião em uma ata organizada.',
+  prompt:`Transforme as anotações abaixo em uma ata de reunião organizada.
+
+Anotações da reunião: [COLE AS ANOTAÇÕES OU O TEXTO EXTRAÍDO]
+
+Gere: participantes (se mencionados), principais pontos discutidos, decisões tomadas, e ações combinadas com responsável e prazo (quando mencionados).`},
+{ theme:'leitor', title:'Comparação entre Duas Versões de Documento', diff:'AVANÇADO', type:'ANÁLISE',
+  desc:'Compara duas versões de um mesmo documento e aponta o que mudou de fato.',
+  prompt:`Compare as duas versões do documento abaixo e me diga o que mudou.
+
+Versão 1: [COLE O TEXTO]
+Versão 2: [COLE O TEXTO]
+
+Liste: o que foi adicionado, o que foi removido, o que foi reescrito com mudança de sentido (não só de forma), e se alguma mudança merece atenção especial.`},
+{ theme:'leitor', title:'Leitura de Contrato de Crédito/Empréstimo', diff:'AVANÇADO', type:'ANÁLISE',
+  desc:'Lê uma proposta de crédito/empréstimo e traduz as condições reais em linguagem simples, incluindo o custo total.',
+  prompt:`Vou colar/anexar uma proposta de crédito ou empréstimo que recebi. Me ajude a entender as condições reais.
+
+Proposta: [COLE OU ANEXE O DOCUMENTO] | Valor solicitado: [VALOR] | Prazo: [DESCREVA]
+
+Analise e me diga em linguagem simples: 1) a taxa de juros real e o CET (Custo Efetivo Total), se estiver informado, 2) o valor total que vou pagar ao final comparado ao valor solicitado, 3) as condições de pagamento antecipado ou atraso, 4) qualquer cláusula ou taxa escondida que eu deveria notar antes de aceitar.
+
+Esta análise não substitui a orientação de um contador ou consultor financeiro.`},
+{ theme:'apresentacoes', title:'Apresentação de Resultado', diff:'INTERMEDIÁRIO', type:'GERAÇÃO',
+  desc:'Gera uma apresentação de resultados completa, com conteúdo pronto e direção visual fotorrealista para cada slide.',
+  prompt:`Você é um especialista em apresentações executivas de alto impacto. Crie a estrutura completa de uma apresentação de resultados, com conteúdo pronto para cada slide e direção visual fotorrealista.
+
+Período dos resultados: [MÊS/TRIMESTRE] | Público que vai assistir: [DIRETORIA/EQUIPE/CLIENTE] | Principais números do período: [LISTAR RECEITA, METAS, INDICADORES] | Destaques positivos: [LISTAR] | Pontos de atenção: [LISTAR] | Tom desejado: [FORMAL/MOTIVACIONAL]
+
+Para cada slide, entregue: o título do slide, o conteúdo completo pronto (texto de verdade, não apenas tópicos soltos), e uma descrição de imagem fotorrealista alinhada ao tema do slide (para gerar ou buscar depois — evite ícones ou clipart genérico).
+
+Estruture a apresentação com: 1) capa de impacto, 2) agenda, 3) resumo executivo do período, 4) números principais com comparação ao período anterior, 5) destaques e conquistas, 6) pontos de atenção e suas causas, 7) ações e próximos passos, 8) fechamento com uma mensagem inspiradora.
+
+Ao final, monte um guia de identidade visual da apresentação: paleta de cores sugerida, estilo de fotografia (corporativo, fotorrealista, tipo de luz e tom de cor), e a combinação de fontes recomendada para título e corpo.`},
+{ theme:'apresentacoes', title:'Apresentação para um Treinamento', diff:'BÁSICO', type:'GERAÇÃO',
+  desc:'Gera uma apresentação de treinamento didática, com conteúdo pronto e direção visual fotorrealista.',
+  prompt:`Você é um especialista em design instrucional e apresentações de treinamento. Crie a estrutura completa de uma apresentação de treinamento, com conteúdo pronto para cada slide e direção visual fotorrealista.
+
+Tema do treinamento: [TEMA] | Público: [DESCREVA O NÍVEL DA EQUIPE] | Duração: [MINUTOS] | Objetivo de aprendizado: [O QUE A PESSOA DEVE SABER FAZER DEPOIS]
+
+Para cada slide, entregue: o título, o conteúdo completo pronto (texto de verdade, não apenas tópicos), e uma descrição de imagem fotorrealista que reforce o conceito do slide (evite clichês genéricos como "pessoas apertando as mãos").
+
+Estruture com: 1) capa, 2) por que esse tema importa agora, 3) objetivos de aprendizado, 4) conteúdo principal dividido em blocos lógicos, 5) um exemplo prático ou estudo de caso, 6) um exercício rápido, 7) resumo dos pontos-chave, 8) próximos passos de como aplicar no dia a dia.
+
+Ao final, sugira o guia de identidade visual (paleta, estilo fotográfico, fontes) coerente com o tom do treinamento.`},
+{ theme:'apresentacoes', title:'Apresentação de um Projeto', diff:'INTERMEDIÁRIO', type:'GERAÇÃO',
+  desc:'Gera uma apresentação de projeto (escopo, cronograma, riscos) pronta para kickoff, status ou encerramento.',
+  prompt:`Você é um especialista em apresentações de gestão de projetos. Crie a estrutura completa de uma apresentação de projeto, com conteúdo pronto para cada slide e direção visual fotorrealista.
+
+Nome do projeto: [NOME] | Momento do projeto: [KICKOFF/STATUS/ENCERRAMENTO] | Público: [PATROCINADOR/EQUIPE/CLIENTE] | Escopo resumido: [DESCREVA] | Prazo e principais marcos: [DESCREVA] | Equipe envolvida: [DESCREVA] | Riscos conhecidos: [LISTAR]
+
+Para cada slide, entregue: o título, o conteúdo completo pronto, e uma descrição de imagem fotorrealista alinhada (ambiente de trabalho real, não ícones genéricos).
+
+Estruture com: 1) capa, 2) objetivo e escopo do projeto, 3) cronograma e marcos principais, 4) equipe e responsabilidades, 5) status atual (se for apresentação de acompanhamento), 6) riscos e planos de mitigação, 7) próximos passos, 8) encerramento com o que se espera do público.
+
+Ao final, sugira o guia de identidade visual (paleta, estilo fotográfico, fontes).`},
+{ theme:'apresentacoes', title:'Apresentação de Integração', diff:'BÁSICO', type:'GERAÇÃO',
+  desc:'Gera uma apresentação de onboarding para novos colaboradores, com visual acolhedor e conteúdo completo.',
+  prompt:`Você é um especialista em apresentações de onboarding e cultura organizacional. Crie a estrutura completa de uma apresentação de integração para novos colaboradores, com conteúdo pronto para cada slide e direção visual fotorrealista.
+
+Cargo/área do novo colaborador: [DESCREVA] | Principais informações que ele precisa saber no primeiro dia: [LISTAR] | Valores/cultura da empresa que devem aparecer: [DESCREVA] | Tom desejado: [ACOLHEDOR/FORMAL]
+
+Para cada slide, entregue: o título, o conteúdo completo pronto, e uma descrição de imagem fotorrealista acolhedora e real (evite clipart genérico de "welcome aboard").
+
+Estruture com: 1) capa de boas-vindas, 2) sobre a empresa (história, missão, valores), 3) estrutura e organograma resumido, 4) como funciona o dia a dia (ferramentas, rotina, comunicação), 5) políticas essenciais que não podem faltar, 6) benefícios e cultura, 7) primeiros passos práticos para a primeira semana, 8) mensagem de boas-vindas final.
+
+Ao final, sugira o guia de identidade visual (paleta, estilo fotográfico, fontes).`},
+{ theme:'apresentacoes', title:'Apresentação da Empresa', diff:'INTERMEDIÁRIO', type:'GERAÇÃO',
+  desc:'Gera uma apresentação institucional (pitch da empresa) para clientes, parceiros ou investidores.',
+  prompt:`Você é um especialista em apresentações institucionais de alto impacto. Crie a estrutura completa de uma apresentação da empresa, com conteúdo pronto para cada slide e direção visual fotorrealista, para uso com clientes, parceiros ou investidores.
+
+Empresa: [NOME] | Público da apresentação: [CLIENTE/PARCEIRO/INVESTIDOR] | O que a empresa faz: [DESCREVA] | Diferenciais: [LISTAR] | Principais resultados/provas: [DESCREVA] | Objetivo da apresentação: [FECHAR VENDA/BUSCAR PARCERIA/CAPTAR INVESTIMENTO]
+
+Para cada slide, entregue: o título, o conteúdo completo pronto, e uma descrição de imagem fotorrealista profissional e alinhada à marca.
+
+Estruture com: 1) capa de impacto, 2) o problema que o mercado enfrenta, 3) a solução/proposta da empresa, 4) diferenciais competitivos, 5) provas e resultados (cases, números), 6) como funciona o processo/metodologia, 7) próximos passos/chamada para ação, 8) contato.
+
+Ao final, sugira o guia de identidade visual (paleta, estilo fotográfico, fontes).`},
+{ theme:'apresentacoes', title:'Apresentação de um Orçamento', diff:'INTERMEDIÁRIO', type:'GERAÇÃO',
+  desc:'Gera uma apresentação de proposta/orçamento comercial persuasiva e visualmente profissional.',
+  prompt:`Você é um especialista em apresentações comerciais persuasivas. Crie a estrutura completa de uma apresentação de orçamento/proposta, com conteúdo pronto para cada slide e direção visual fotorrealista.
+
+Cliente: [NOME/PERFIL] | Solução/produto orçado: [DESCREVA] | Investimento: [VALOR] | Prazo de entrega/execução: [DESCREVA] | Diferenciais da proposta: [LISTAR] | Validade da proposta: [DATA]
+
+Para cada slide, entregue: o título, o conteúdo completo pronto, e uma descrição de imagem fotorrealista que reforce a percepção de valor (evite imagens genéricas de "aperto de mão").
+
+Estruture com: 1) capa, 2) entendimento do problema do cliente, 3) a solução proposta, 4) escopo detalhado do que está incluso, 5) investimento e condições de pagamento, 6) prazo de execução/entrega, 7) diferenciais e por que escolher essa proposta, 8) validade da proposta e próximo passo para aceite.
+
+Ao final, sugira o guia de identidade visual (paleta, estilo fotográfico, fontes) alinhado ao posicionamento do cliente.`},
+{ theme:'apresentacoes', title:'Apresentação de Plano Estratégico Anual', diff:'AVANÇADO', type:'GERAÇÃO',
+  desc:'Gera uma apresentação para comunicar o plano estratégico do ano para a equipe ou sócios, com conteúdo pronto e visual fotorrealista.',
+  prompt:`Você é um especialista em apresentações executivas de alto impacto. Crie a estrutura completa de uma apresentação de plano estratégico anual, com conteúdo pronto para cada slide e direção visual fotorrealista.
+
+Empresa: [NOME] | Público: [EQUIPE/SÓCIOS/CONSELHO] | Principais metas do ano: [LISTAR] | Principais iniciativas planejadas: [LISTAR]
+
+Para cada slide, entregue: o título, o conteúdo completo pronto, e uma descrição de imagem fotorrealista alinhada ao tema.
+
+Estruture com: 1) capa de impacto, 2) retrospectiva breve do ano anterior (1-2 aprendizados), 3) visão do ano — onde queremos chegar, 4) metas principais com números claros, 5) as iniciativas estratégicas prioritárias, 6) cronograma macro do ano, 7) o que se espera de cada área/pessoa, 8) fechamento motivador reforçando a visão.
+
+Ao final, sugira o guia de identidade visual (paleta, estilo fotográfico, fontes).`},
+];
 
 function normDiff(d){
   return d === 'BÁSICO' ? 'basico' : d === 'INTERMEDIÁRIO' ? 'intermediario' : 'avancado';
@@ -720,21 +2515,7 @@ document.getElementById('fontDec').addEventListener('click', () => setFontScale(
 document.getElementById('fontInc').addEventListener('click', () => setFontScale(fontScale + 10));
 document.getElementById('fontReset').addEventListener('click', () => setFontScale(100));
 
-// ---------- carregamento dos dados (áreas, frameworks e aviso) ----------
-async function loadData(){
-  try {
-    const res = await fetch('/api/frameworks');
-    if (!res.ok) throw new Error('Falha ao carregar frameworks');
-    const data = await res.json();
-    THEMES = (data.themes || []).map(t => ({ id: t.id, name: t.name, icon: t.icon, desc: t.description }));
-    ITEMS = (data.frameworks || []).map(f => ({ theme: f.theme, title: f.title, diff: f.difficulty, type: f.type, desc: f.description, prompt: f.prompt }));
-  } catch (err) {
-    console.error(err);
-  }
-  renderThemes();
-  renderCatalog();
-}
-
+// ---------- inicialização (áreas e frameworks já vêm fixos no arquivo; aviso é opcional) ----------
 async function loadNotice(){
   try {
     const res = await fetch('/api/notices');
@@ -752,11 +2533,12 @@ async function loadNotice(){
       }
     }
   } catch (err) {
-    console.error(err);
+    // Sem aviso configurado ainda — tudo bem, o portal funciona normalmente sem ele.
   }
 }
 
-loadData();
+renderThemes();
+renderCatalog();
 loadNotice();
 </script>
 

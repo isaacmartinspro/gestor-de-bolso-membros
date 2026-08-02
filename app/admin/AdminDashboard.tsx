@@ -45,7 +45,7 @@ function fmtDate(value: string | null) {
 }
 
 export default function AdminDashboard({ adminEmail }: { adminEmail: string }) {
-  const [tab, setTab] = useState<"frameworks" | "subscribers" | "notices">("frameworks");
+  const [tab, setTab] = useState<"subscribers" | "notices">("subscribers");
 
   return (
     <div className="admin-shell">
@@ -60,9 +60,6 @@ export default function AdminDashboard({ adminEmail }: { adminEmail: string }) {
       </div>
 
       <div className="admin-tabs">
-        <button className={`admin-tab ${tab === "frameworks" ? "active" : ""}`} onClick={() => setTab("frameworks")}>
-          Frameworks
-        </button>
         <button className={`admin-tab ${tab === "subscribers" ? "active" : ""}`} onClick={() => setTab("subscribers")}>
           Assinantes
         </button>
@@ -71,7 +68,6 @@ export default function AdminDashboard({ adminEmail }: { adminEmail: string }) {
         </button>
       </div>
 
-      {tab === "frameworks" && <FrameworksTab />}
       {tab === "subscribers" && <SubscribersTab />}
       {tab === "notices" && <NoticesTab />}
     </div>
