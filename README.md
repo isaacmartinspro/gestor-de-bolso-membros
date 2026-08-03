@@ -45,7 +45,17 @@ Instituto Isaac Martins.
 
 Em **Authentication > URL Configuration**, adicione a URL do seu site em
 produção (ex: `https://membros.isaacmartins.com.br`) em **Site URL** e em
-**Redirect URLs** (incluindo `/set-password`).
+**Redirect URLs** (incluindo `/set-password` e `/reset-password`).
+
+### 3.1 Configurar o e-mail de "esqueci minha senha"
+A tela de login agora tem um link **"Esqueci minha senha"**, que leva a
+`/forgot-password`. A pessoa digita o e-mail e recebe um link (via
+Supabase) para criar uma nova senha em `/reset-password`.
+
+Em **Authentication > Email Templates**, edite também o template
+**"Reset Password"** — é esse e-mail que a pessoa recebe ao clicar em
+"Esqueci minha senha". Confirme que `/reset-password` está na lista de
+**Redirect URLs** (passo acima), senão o link do e-mail não vai funcionar.
 
 ### 4. Configurar as variáveis de ambiente
 Copie `.env.example` para `.env.local` e preencha todos os valores,
@@ -94,8 +104,10 @@ Voomp um exemplo de payload de webhook se a documentação não deixar claro.
 
 ```
 app/
-  login/              — tela de login (e-mail + senha)
-  set-password/        — tela de criar senha (a partir do link do e-mail)
+  login/              — tela de login (e-mail + senha, com opção de mostrar senha)
+  forgot-password/     — tela para pedir o e-mail de redefinição de senha
+  reset-password/       — tela de redefinir senha (a partir do link do e-mail)
+  set-password/        — tela de criar senha (a partir do link de convite)
   portal/               — página protegida que exibe o Gestor de Bolso
   api/webhook/voomp/   — recebe as notificações de compra do Voomp
   api/portal-content/  — entrega o HTML do portal, só para quem está autenticado e ativo
