@@ -20,7 +20,7 @@ export async function GET() {
 
   const { data: subscriber } = await supabase
     .from("subscribers")
-    .select("status, expires_at")
+    .select("status, expires_at, name")
     .eq("email", user.email)
     .maybeSingle();
 
@@ -40,7 +40,16 @@ export async function GET() {
   const filePath = path.join(process.cwd(), "private", "gestor-de-bolso-content.html");
   const html = await readFile(filePath, "utf-8");
 
-  return new NextResponse(html, {
+  // Primeiro nome para a saudação no topo do portal ("Olá, Fulano!").
+  // Vem do cadastro do assinante (subscribers.name) quando disponível;
+  // se a compra não trouxe nome (ex: webhook antigo), a saudação cai para
+  // "Olá!" sem quebrar nada — ver renderGreetingName() no HTML do portal.
+  const rawName = subscriber?.name?.trim() || "";
+  const firstName = rawName.split(/\s+/)[0] || "";
+  const nameScript = `<script>window.__FIRST_NAME__ = ${JSON.stringify(firstName)};</script>`;
+  const htmlWithName = html.replace("<head>", `<head>\n${nameScript}`);
+
+  return new NextResponse(htmlWithName, {
     headers: { "Content-Type": "text/html; charset=utf-8" },
   });
 }
