@@ -55,6 +55,7 @@ export async function POST(request: NextRequest) {
 
   // ---- AJUSTE AQUI: mapeie para os campos reais do payload do Voomp ----
   const email: string | undefined = payload?.buyer?.email ?? payload?.email;
+  const buyerName: string | undefined = payload?.buyer?.name ?? payload?.name;
   const eventRaw: string = (payload?.status ?? payload?.event ?? "").toString().toLowerCase();
   const planRaw: string | undefined = payload?.product?.name ?? payload?.plan;
   const transactionId: string | undefined =
@@ -91,11 +92,14 @@ export async function POST(request: NextRequest) {
   expiresAt.setDate(expiresAt.getDate() + durationDays);
 
   // Cria ou atualiza a linha de assinante e libera o acesso.
+  // O nome (quando o Voomp manda) é usado só para a saudação no portal
+  // ("Olá, Fulano!") — se não vier, o portal cai para "Olá!" sem problema.
   const { error: upsertError } = await supabase
     .from("subscribers")
     .upsert(
       {
         email,
+        ...(buyerName ? { name: buyerName } : {}),
         plan,
         status: "active",
         voomp_transaction_id: transactionId ?? null,
