@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
@@ -11,7 +10,6 @@ export default function LoginForm() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -55,30 +53,15 @@ export default function LoginForm() {
 
       <div className="field">
         <label htmlFor="password">Senha</label>
-        <div className="field-input-wrap">
-          <input
-            id="password"
-            type={showPassword ? "text" : "password"}
-            autoComplete="current-password"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="••••••••"
-          />
-          <button
-            type="button"
-            className="field-toggle"
-            onClick={() => setShowPassword((v) => !v)}
-            aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
-            aria-pressed={showPassword}
-            tabIndex={-1}
-          >
-            {showPassword ? "Ocultar" : "Mostrar"}
-          </button>
-        </div>
-        <Link href="/forgot-password" className="field-link">
-          Esqueci minha senha
-        </Link>
+        <input
+          id="password"
+          type="password"
+          autoComplete="current-password"
+          required
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="••••••••"
+        />
       </div>
 
       <button type="submit" className="btn" disabled={loading}>

@@ -121,6 +121,13 @@
   .notice-banner.show{ display:block; }
   .notice-banner p{ font-size:0.88rem; color:var(--ink); margin:0; }
   .notice-banner .close-notice{ background:none; border:none; color:var(--ink-faint); cursor:pointer; margin-left:14px; font-family:'IBM Plex Mono', monospace; font-size:0.75rem; text-decoration:underline; }
+
+  .novidade-card{
+    display:flex; align-items:flex-start; gap:16px; background:var(--card); border:1px solid var(--card-border);
+    border-radius:12px; padding:26px; max-width:680px;
+  }
+  .novidade-icon{ font-size:1.4rem; flex-shrink:0; }
+  .novidade-card p{ color:var(--ink); font-size:0.95rem; line-height:1.6; margin:0; }
   .font-btn{
     background:transparent; border:1px solid var(--card-border); color:var(--ink-dim);
     font-family:'IBM Plex Mono', monospace; font-size:0.72rem; width:28px; height:28px; border-radius:6px;
@@ -129,33 +136,54 @@
   .font-btn:hover{ border-color:var(--amber); color:var(--amber); }
   #fontReset{ font-size:0.68rem; }
 
+  .hero{ position:relative; padding:84px 0 56px; overflow:hidden; }
+  .hero-portal{ padding:72px 0 48px; text-align:center; }
+  .hero-portal h1{ margin:0 0 12px; }
+  .hero-portal .subtitle{ margin:0 auto 32px; max-width:520px; }
+  .hero-search-wrap{
+    position:relative; max-width:640px; margin:0 auto 24px; display:flex; align-items:center;
+    background:var(--card); border:1px solid var(--card-border); border-radius:100px;
+    padding:6px 8px 6px 22px; transition:border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .hero-search-wrap:focus-within{ border-color:var(--amber); box-shadow:0 0 0 4px rgba(232,163,61,0.12); }
+  .hero-search-icon{ font-size:1.1rem; margin-right:12px; flex-shrink:0; }
+  .hero-search-input{
+    flex:1; background:none; border:none; color:var(--ink); font-family:'Manrope', sans-serif;
+    font-size:1.05rem; padding:12px 6px;
+  }
+  .hero-search-input:focus{ outline:none; }
+  .hero-portal .hero-cta{ justify-content:center; }
+  .hero::before{
+    content:''; position:absolute; top:-120px; right:-160px; width:520px; height:520px;
+    background:radial-gradient(circle, rgba(232,163,61,0.14), transparent 68%); z-index:0;
+  }
+  .badge{
+    display:inline-flex; align-items:center; gap:8px; border:1px solid var(--amber-dim); color:var(--amber);
+    padding:6px 14px 6px 10px; border-radius:100px; font-family:'IBM Plex Mono', monospace; font-size:0.72rem;
+    letter-spacing:0.09em; text-transform:uppercase; background:rgba(232,163,61,0.07); position:relative; z-index:1;
+  }
+  .badge .seal{ width:16px; height:16px; border-radius:50%; border:1.5px solid var(--amber); display:flex; align-items:center; justify-content:center; font-size:9px; }
   h1{
     font-family:'Oswald', sans-serif; font-weight:600; font-size:clamp(2.3rem, 5.6vw, 4.2rem);
     line-height:1.06; letter-spacing:-0.01em; margin:26px 0 20px; max-width:760px; position:relative; z-index:1;
   }
   h1 .hl{ color:var(--bg); background:var(--amber); padding:0 10px 4px; display:inline-block; transform:rotate(-1deg); box-decoration-break:clone; -webkit-box-decoration-break:clone; }
+  .subtitle{ font-size:1.13rem; color:var(--ink-dim); max-width:620px; font-weight:400; position:relative; z-index:1; }
+  .hero-cta{ margin-top:34px; display:flex; gap:14px; flex-wrap:wrap; position:relative; z-index:1; }
   .btn{ font-family:'Manrope', sans-serif; font-weight:700; font-size:0.95rem; padding:14px 26px; border-radius:6px; border:none; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:8px; transition:transform 0.15s ease, box-shadow 0.15s ease; }
   .btn-primary{ background:var(--amber); color:#14181c; }
   .btn-primary:hover{ transform:translateY(-2px); box-shadow:0 8px 22px rgba(232,163,61,0.25); }
   .btn-ghost{ background:transparent; border:1px solid var(--card-border); color:var(--ink); }
   .btn-ghost:hover{ border-color:var(--ink-dim); }
 
-  .greeting{ position:relative; padding:96px 0 60px; text-align:center; overflow:hidden; }
-  .greeting::before{
-    content:''; position:absolute; top:-160px; left:50%; transform:translateX(-50%); width:640px; height:640px;
-    background:radial-gradient(circle, rgba(232,163,61,0.12), transparent 68%); z-index:0;
-  }
-  .greeting .wrap{ position:relative; z-index:1; }
-  .greeting h1{ margin:0 0 12px; max-width:none; font-size:clamp(2rem, 4.4vw, 3rem); }
-  .greeting .greet-sub{ color:var(--ink-dim); font-size:1.05rem; margin-bottom:32px; font-weight:400; }
-  .greeting-search{ position:relative; max-width:600px; margin:0 auto; text-align:left; }
-  .greeting-search .search-icon{ position:absolute; left:21px; top:50%; transform:translateY(-50%); font-size:1.05rem; color:var(--ink-faint); pointer-events:none; }
-  .greeting-search-input{
-    width:100%; background:var(--card); border:1px solid var(--card-border); border-radius:100px;
-    padding:18px 24px 18px 52px; color:var(--ink); font-family:'Manrope', sans-serif; font-size:1rem;
-  }
-  .greeting-search-input:focus{ outline:none; border-color:var(--amber); }
-  @media (max-width:640px){ .greeting{ padding:64px 0 44px; } }
+  .values{ padding:16px 0 66px; }
+  .values-grid{ display:grid; grid-template-columns:repeat(4, 1fr); gap:1px; background:var(--card-border); border:1px solid var(--card-border); border-radius:10px; overflow:hidden; }
+  @media (max-width:900px){ .values-grid{ grid-template-columns:repeat(2, 1fr); } }
+  @media (max-width:520px){ .values-grid{ grid-template-columns:1fr; } }
+  .value{ background:var(--card); padding:26px 22px; }
+  .value .icon{ font-size:1.35rem; margin-bottom:14px; display:block; }
+  .value h3{ font-family:'Oswald', sans-serif; font-weight:500; font-size:1.05rem; margin-bottom:8px; }
+  .value p{ font-size:0.86rem; color:var(--ink-dim); }
 
   section{ padding:60px 0; }
   .section-head{ margin-bottom:32px; }
@@ -245,7 +273,7 @@
     <nav class="headnav">
       <a href="#areas">Áreas</a>
       <a href="#catalogo">Catálogo</a>
-      <a href="#sobre">Sobre</a>
+      <a href="#novidades">Novidades</a>
     </nav>
     <div class="font-ctrl">
       <button class="font-btn" id="fontDec" title="Diminuir fonte">A−</button>
@@ -255,14 +283,43 @@
   </div>
 </header>
 
-<section class="greeting">
+<section class="hero hero-portal">
   <div class="wrap">
-    <h1 id="greetHeading">Olá!</h1>
-    <p class="greet-sub">O que você está buscando hoje?</p>
-    <div class="greeting-search">
-      <span class="search-icon">🔎</span>
-      <input class="greeting-search-input" id="greetingSearch" type="text" placeholder="Busca rápida: qual assunto você precisa?" autocomplete="off">
-      <div class="header-dropdown" id="greetingDropdown"></div>
+    <h1 id="greetingTitle">Olá! 👋</h1>
+    <p class="subtitle" id="greetingSubtitle">O que você precisa resolver hoje?</p>
+    <div class="hero-search-wrap">
+      <span class="hero-search-icon">🔎</span>
+      <input class="hero-search-input" id="heroSearchInput" type="text" placeholder="Busque por assunto: feedback, fluxo de caixa, entrevista..." autocomplete="off">
+    </div>
+    <div class="hero-cta">
+      <a href="#areas" class="btn btn-ghost">Ver todas as áreas</a>
+    </div>
+  </div>
+</section>
+
+<section class="values">
+  <div class="wrap">
+    <div class="values-grid">
+      <div class="value">
+        <span class="icon">⏳</span>
+        <h3>Economize seu Tempo</h3>
+        <p>Frameworks prontos para você copiar e colar, facilitando seu dia a dia.</p>
+      </div>
+      <div class="value">
+        <span class="icon">🔎</span>
+        <h3>Consulta rápida</h3>
+        <p>Com uma única palavra você consegue pesquisar o framework ideal para suas necessidades.</p>
+      </div>
+      <div class="value">
+        <span class="icon">🏭</span>
+        <h3>Fábrica de Frameworks</h3>
+        <p>Mande a sua rotina e a IA constrói, do zero, um framework exclusivo para o seu processo.</p>
+      </div>
+      <div class="value">
+        <span class="icon">🔔</span>
+        <h3>Grupo de atualizações</h3>
+        <p>Entre no grupo e receba os frameworks novos assim que saem do forno — antes de todo mundo.</p>
+      </div>
     </div>
   </div>
 </section>
@@ -315,22 +372,16 @@
   </div>
 </section>
 
-<section id="sobre">
+<section id="novidades">
   <div class="wrap">
     <div class="section-head">
-      <span class="eyebrow">Sobre</span>
-      <h2>Por que o Gestor de Bolso existe</h2>
-      <p class="desc" style="max-width:680px;">Depois de mais de 30 anos ajudando empresas a venderem mais e gerirem melhor, uma coisa ficou clara: o gestor que sabe pedir a coisa certa para a IA resolve em minutos o que levaria horas. O Gestor de Bolso é a caixa de ferramentas prática para isso — sem enrolação, sem teoria solta, direto ao ponto.</p>
-      <p class="about-author">Desenvolvido pelo Prof. Isaac Martins, maior autoridade no Brasil em IA aplicada à área comercial, autor de bestseller, mestre pela USP, coordenador de MBAs.</p>
-      <div class="about-links-label">Conheça mais</div>
-      <div class="about-links">
-        <a class="about-link" href="https://anhangueraeducacional.com.br" target="_blank" rel="noopener">MBAs em IA</a>
-        <a class="about-link" href="https://isaacmartins.com.br/servicos/consultoria/" target="_blank" rel="noopener">Consultoria</a>
-        <a class="about-link" href="https://isaacmartins.com.br/servicos/treinamentos/" target="_blank" rel="noopener">Treinamento</a>
-        <a class="about-link" href="https://isaacmartins.com.br/servicos/consultoria/" target="_blank" rel="noopener">Mentoria</a>
-        <a class="about-link" href="https://livros.isaacmartins.com.br/" target="_blank" rel="noopener">Livros</a>
-        <a class="about-link" href="https://extensao.anhangueraeducacional.com.br" target="_blank" rel="noopener">Cursos</a>
-      </div>
+      <span class="eyebrow">Novidades</span>
+      <h2>Fique por dentro</h2>
+      <p class="desc" style="max-width:680px;">Avisos, comunicados e os últimos lançamentos de frameworks aparecem aqui, direto do Instituto Isaac Martins.</p>
+    </div>
+    <div class="novidade-card" id="novidadeCard">
+      <span class="novidade-icon">🔔</span>
+      <p id="novidadeText">Nenhuma novidade publicada no momento. Volte em breve!</p>
     </div>
   </div>
 </section>
@@ -2473,68 +2524,6 @@ document.addEventListener('click', (e) => {
   if (!e.target.closest('.header-search')) headerDropdown.classList.remove('open');
 });
 
-// ---------- busca do card de boas-vindas ----------
-const greetingSearch = document.getElementById('greetingSearch');
-const greetingDropdown = document.getElementById('greetingDropdown');
-
-function renderGreetingDropdown(term){
-  if (!term){
-    greetingDropdown.classList.remove('open');
-    greetingDropdown.innerHTML = '';
-    return;
-  }
-  const matches = matchItems(term);
-  if (matches.length === 0){
-    greetingDropdown.innerHTML = `<div class="hd-empty">Nenhum framework encontrado para "${term}".</div>`;
-    greetingDropdown.classList.add('open');
-    return;
-  }
-  const shown = matches.slice(0, MAX_QUICK_RESULTS);
-  greetingDropdown.innerHTML = shown.map(({ i, idx }) => `
-    <div class="hd-item" data-idx="${idx}">
-      <span class="hd-num mono">${String(idx+1).padStart(2,'0')}</span>
-      <div class="hd-body">
-        <div class="hd-title">${i.title}</div>
-        <div class="hd-meta">${themeName(i.theme)} · ${diffLabel(i.diff)} · ${i.type}</div>
-      </div>
-    </div>
-  `).join('') + (matches.length > MAX_QUICK_RESULTS ? `<div class="hd-more" id="gdSeeAll">Ver todos os ${matches.length} resultados no catálogo →</div>` : '');
-  greetingDropdown.classList.add('open');
-
-  greetingDropdown.querySelectorAll('.hd-item').forEach(el => {
-    el.addEventListener('click', () => {
-      openModal(parseInt(el.dataset.idx));
-      greetingDropdown.classList.remove('open');
-    });
-  });
-  const seeAll = document.getElementById('gdSeeAll');
-  if (seeAll){
-    seeAll.addEventListener('click', () => jumpToCatalogWith(term));
-  }
-}
-
-greetingSearch.addEventListener('input', (e) => {
-  renderGreetingDropdown(e.target.value.trim());
-});
-greetingSearch.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter'){
-    jumpToCatalogWith(e.target.value.trim());
-  }
-});
-greetingSearch.addEventListener('focus', (e) => {
-  if (e.target.value.trim()) renderGreetingDropdown(e.target.value.trim());
-});
-document.addEventListener('click', (e) => {
-  if (!e.target.closest('.greeting-search')) greetingDropdown.classList.remove('open');
-});
-
-// ---------- saudação personalizada ----------
-(function renderGreetingName(){
-  const rawName = (typeof window.__FIRST_NAME__ === 'string') ? window.__FIRST_NAME__.trim() : '';
-  const heading = document.getElementById('greetHeading');
-  heading.textContent = rawName ? `Olá, ${rawName}!` : 'Olá!';
-})();
-
 // ---------- controle de tamanho de fonte ----------
 let fontScale = 100;
 function setFontScale(v){
@@ -2552,6 +2541,7 @@ async function loadNotice(){
     if (!res.ok) return;
     const data = await res.json();
     if (data.message){
+      document.getElementById('novidadeText').textContent = data.message;
       const dismissed = sessionStorage.getItem('noticeDismissed') === data.message;
       if (!dismissed){
         document.getElementById('noticeText').textContent = data.message;
@@ -2567,9 +2557,37 @@ async function loadNotice(){
   }
 }
 
+async function loadGreeting(){
+  try {
+    const res = await fetch('/api/me');
+    if (!res.ok) return;
+    const data = await res.json();
+    const raw = (data.name && data.name.trim()) ? data.name.trim() : (data.email || '').split('@')[0];
+    const firstName = raw ? raw.split(' ')[0] : '';
+    const cap = firstName ? firstName.charAt(0).toUpperCase() + firstName.slice(1) : '';
+    document.getElementById('greetingTitle').textContent = cap ? `Olá, ${cap}! 👋` : 'Olá! 👋';
+  } catch (err) {
+    // Mantém a saudação genérica se não conseguir buscar o nome.
+  }
+}
+
+const heroSearchInput = document.getElementById('heroSearchInput');
+heroSearchInput.addEventListener('input', (e) => {
+  const term = e.target.value;
+  searchTerm = term;
+  document.getElementById('searchInput').value = term;
+  renderCatalog();
+});
+heroSearchInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter'){
+    document.getElementById('catalogo').scrollIntoView({ behavior:'smooth', block:'start' });
+  }
+});
+
 renderThemes();
 renderCatalog();
 loadNotice();
+loadGreeting();
 </script>
 
 </body>
