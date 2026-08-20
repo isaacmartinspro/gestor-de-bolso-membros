@@ -3,7 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import type { CookieOptions } from "@supabase/ssr";
 
 // Roda antes de qualquer requisição para /portal ou /api/portal-content.
-// Se não houver sessão válida, manda a pessoa para /login.
+// Se não houver sessão válida, manda a pessoa para /login-gestor.
 export async function middleware(request: NextRequest) {
   let response = NextResponse.next({ request });
 
@@ -35,7 +35,7 @@ export async function middleware(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    const loginUrl = new URL("/login", request.url);
+    const loginUrl = new URL("/login-gestor", request.url);
     return NextResponse.redirect(loginUrl);
   }
 

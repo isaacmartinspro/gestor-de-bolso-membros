@@ -10,7 +10,7 @@ export default async function AdminPage() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/login");
+    redirect("/login-gestor");
   }
 
   if (!isAdminEmail(user.email)) {
