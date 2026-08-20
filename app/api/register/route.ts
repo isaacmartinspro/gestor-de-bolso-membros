@@ -19,22 +19,44 @@ export async function POST(request: NextRequest) {
 
   const supabase = createAdminClient();
 
-  // Cria a conta já confirmada — sem precisar de e-mail de verificação.
-  const { data: created, error: createError } = await supabase.auth.admin.createUser({
-    email,
-    password,
-    email_confirm: true,
-    user_metadata: { name, cargo, whatsapp },
-  });
+  // Verifica se já existe uma conta com esse e-mail — pode ter sido criada
+  // antes por outro caminho (ex: teste anterior, ou o webhook do Voomp).
+  // Nesse caso, só definimos a senha nessa conta em vez de dar erro.
+  const { data: existingUsers, error: listError } = await supabase.auth.admin.listUsers();
+  if (listError) {
+    console.error("Erro ao consultar contas existentes:", listError);
+    return new NextResponse("Não foi possível criar o acesso. Tente novamente.", { status: 500 });
+  }
 
-  if (createError) {
-    const alreadyExists = createError.message?.toLowerCase().includes("already");
-    return new NextResponse(
-      alreadyExists
-        ? "Esse e-mail já tem cadastro. Use a tela de login."
-        : "Não foi possível criar o acesso. Tente novamente.",
-      { status: alreadyExists ? 409 : 500 }
+  const existing = existingUsers?.users?.find(
+    (u) => u.email?.toLowerCase() === String(email).toLowerCase()
+  );
+
+  let userId: string | undefined;
+
+  if (existing) {
+    const { data: updated, error: updateError } = await supabase.auth.admin.updateUserById(
+      existing.id,
+      { password, email_confirm: true, user_metadata: { name, cargo, whatsapp } }
     );
+    if (updateError) {
+      console.error("Erro ao definir senha na conta existente:", updateError);
+      return new NextResponse("Não foi possível criar o acesso. Tente novamente.", { status: 500 });
+    }
+    userId = updated.user?.id;
+  } else {
+    // Cria a conta já confirmada — sem precisar de e-mail de verificação.
+    const { data: created, error: createError } = await supabase.auth.admin.createUser({
+      email,
+      password,
+      email_confirm: true,
+      user_metadata: { name, cargo, whatsapp },
+    });
+    if (createError) {
+      console.error("Erro ao criar conta:", createError);
+      return new NextResponse("Não foi possível criar o acesso. Tente novamente.", { status: 500 });
+    }
+    userId = created.user?.id;
   }
 
   const { error: subscriberError } = await supabase.from("subscribers").upsert(
@@ -55,5 +77,5 @@ export async function POST(request: NextRequest) {
     // A conta de login já foi criada; não falha o cadastro por causa disso.
   }
 
-  return NextResponse.json({ ok: true, userId: created.user?.id });
+  return NextResponse.json({ ok: true, userId });
 }
