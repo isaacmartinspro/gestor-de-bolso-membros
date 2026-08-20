@@ -16,6 +16,8 @@ type Subscriber = {
   id: string;
   email: string;
   name: string | null;
+  cargo: string | null;
+  whatsapp: string | null;
   plan: string;
   status: string;
   expires_at: string | null;
@@ -336,6 +338,8 @@ function SubscribersTab() {
               <tr>
                 <th>Nome</th>
                 <th>E-mail</th>
+                <th>Cargo</th>
+                <th>WhatsApp</th>
                 <th>Plano</th>
                 <th>Status</th>
                 <th>Último acesso</th>
@@ -348,6 +352,8 @@ function SubscribersTab() {
                 <tr key={s.id}>
                   <td>{s.name || "—"}</td>
                   <td>{s.email}</td>
+                  <td>{s.cargo || "—"}</td>
+                  <td>{s.whatsapp || "—"}</td>
                   <td>{s.plan}</td>
                   <td>{s.status}</td>
                   <td>{fmtDate(s.last_sign_in_at)}</td>

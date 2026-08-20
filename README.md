@@ -6,14 +6,22 @@ acesso ao portal do Gestor de Bolso.
 ## Como funciona o fluxo
 
 1. A pessoa compra no Voomp.
-2. O Voomp chama o webhook `/api/webhook/voomp` deste projeto.
-3. O webhook libera o acesso no banco (tabela `subscribers`) e, se for a
-   primeira compra desse e-mail, cria a conta de login — **sem senha**.
-4. Para entrar, a pessoa digita o e-mail em `/login`, recebe um **código de
-   6 dígitos por e-mail** e digita esse código. Não existe senha em nenhum
-   momento do fluxo.
+2. O Voomp redireciona (ou, dentro da área de membros do Voomp, mostra um
+   link) para `/cadastro-gestor` deste site.
+3. A pessoa preenche nome, e-mail, cargo, WhatsApp e cria uma senha. A
+   conta é criada na hora — sem confirmação por e-mail — e ela já cai
+   logada direto no portal.
+4. Nas próximas vezes, ela entra em `/login-gestor` com e-mail e senha.
 5. `/portal` só abre para quem tem sessão válida **e** assinatura com
    status `active` na tabela `subscribers`.
+
+Como o link de cadastro só é divulgado dentro da área de membros do Voomp
+(só quem comprou vê esse link), o próprio Voomp já funciona como a
+"trava" de quem pode se cadastrar — o app não depende do webhook já ter
+rodado antes para liberar o acesso. O webhook (`/api/webhook/voomp`)
+continua existindo e pode ser configurado em paralelo, para manter o
+`plan`/`status`/`expires_at` sincronizados automaticamente, mas não é
+obrigatório para o cadastro funcionar.
 
 ## Passo a passo para colocar no ar
 
@@ -26,23 +34,24 @@ acesso ao portal do Gestor de Bolso.
      compartilhe essa chave, ela dá acesso total ao banco)
 
 ### 2. Rodar o schema do banco
-No Supabase, abra **SQL Editor** e rode o conteúdo do arquivo
-`supabase/schema.sql` deste projeto. Isso cria a tabela `subscribers` e as
-regras de segurança — é a única tabela que este projeto realmente precisa
-hoje (os frameworks ficam fixos no arquivo do portal, não no banco).
+No Supabase, abra **SQL Editor** e rode, nesta ordem:
+1. `supabase/schema.sql` — cria a tabela `subscribers` e as regras de segurança.
+2. `supabase/schema-cadastro.sql` — adiciona os campos `cargo` e `whatsapp`
+   usados no formulário de cadastro.
 
-### 3. Ativar o login por código (OTP) no Supabase
-Em **Authentication > Providers > Email**, confirme que o login por e-mail
-está habilitado (é o padrão). O Supabase já envia um código de 6 dígitos
-junto com o link mágico por padrão — não precisa ativar nada extra.
+Os frameworks ficam fixos no arquivo do portal, não no banco — não
+precisa de mais nenhuma tabela além dessas.
 
-Em **Authentication > Email Templates**, edite o template **"Magic Link"**
-para deixar o código `{{ .Token }}` bem visível no corpo do e-mail (é esse
-número que a pessoa vai digitar na tela de login). Aproveite para deixar
-com a cara do Instituto Isaac Martins.
-
+### 3. Configurar o domínio no Supabase
 Em **Authentication > URL Configuration**, coloque a URL do seu site em
-produção (ex: `https://gestordebolso.ia.br`) em **Site URL**.
+produção (ex: `https://gestordebolso.ia.br`) em **Site URL**. Não precisa
+mexer em templates de e-mail nem em provedores — o cadastro é feito com
+senha própria, sem depender de e-mail de confirmação.
+
+**Atenção:** o plano gratuito do Supabase pausa o projeto automaticamente
+depois de um tempo sem uso. Se o login parar de funcionar do nada, o
+primeiro lugar a checar é a página inicial do projeto no Supabase — se
+aparecer "Project is paused", clique em **"Resume project"**.
 
 ### 4. Configurar as variáveis de ambiente
 Copie `.env.example` para `.env.local` e preencha todos os valores,
@@ -63,43 +72,53 @@ Acesse http://localhost:3000
 4. Faça o deploy.
 5. Aponte o domínio (ex: `gestordebolso.ia.br`) para esse app.
 
-### 7. Configurar o webhook no Voomp
+### 7. Configurar o Voomp
 No painel do Voomp, cadastre a URL do webhook do produto "Gestor de
-Bolso" apontando para:
+Bolso" apontando para (opcional, mas recomendado para manter os dados
+sincronizados):
 ```
 https://SEU-DOMINIO/api/webhook/voomp?secret=SEU_VOOMP_WEBHOOK_SECRET
 ```
 **Importante:** o arquivo `app/api/webhook/voomp/route.ts` tem comentários
 marcados com "AJUSTE AQUI" — os nomes exatos dos campos que o Voomp envia
-(e-mail do comprador, status do pedido, nome do plano) precisam ser
-conferidos com a documentação do Voomp ou com um payload de teste real, e
-ajustados nesse arquivo antes de ir para produção. Peça ao suporte do
-Voomp um exemplo de payload de webhook se a documentação não deixar claro.
+precisam ser conferidos com a documentação do Voomp antes de confiar
+100% no webhook.
+
+O essencial de verdade é configurar, dentro da **área de membros do
+Voomp** (Voomp Play) do produto, um link/botão apontando para:
+```
+https://SEU-DOMINIO/cadastro-gestor
+```
+É esse link que a pessoa vê depois de comprar, e é ele quem "libera" o
+cadastro — por isso não precisa divulgar esse endereço em nenhum outro
+lugar.
 
 ### 8. Testar o fluxo de ponta a ponta
-1. Faça uma compra de teste no Voomp (ou simule uma chamada ao webhook
-   com uma ferramenta como Postman/Insomnia).
-2. Confira na tabela `subscribers` do Supabase se a linha foi criada com
+1. Acesse `/cadastro-gestor` você mesmo, com um e-mail de teste, e
+   preencha o formulário.
+2. Confira se caiu direto no portal depois de cadastrar.
+3. Confira na tabela `subscribers` do Supabase se a linha foi criada com
    `status = active`.
-3. Confira em **Authentication > Users** no Supabase se a conta foi criada.
-4. Em `/login`, digite esse e-mail e confirme que o código de 6 dígitos
-   chega por e-mail (confira também a caixa de spam).
-5. Digite o código e confirme que o portal abre normalmente.
+4. Saia e entre de novo em `/login-gestor` com esse e-mail e a senha que
+   você criou, para confirmar que o login também funciona.
 
 ## Estrutura do projeto
 
 ```
 app/
-  login/                — tela de login (e-mail + código de 6 dígitos)
+  cadastro-gestor/      — tela de cadastro (nome, e-mail, cargo, whatsapp, senha)
+  login-gestor/          — tela de login (e-mail + senha)
   portal/               — página protegida que exibe o Gestor de Bolso
   admin/                 — área de administração (assinantes e avisos)
-  api/webhook/voomp/   — recebe as notificações de compra do Voomp
+  api/register/           — cria a conta a partir do formulário de cadastro
+  api/webhook/voomp/   — recebe as notificações de compra do Voomp (opcional)
   api/portal-content/  — entrega o HTML do portal, só para quem está autenticado e ativo
   api/me/                — retorna nome/e-mail do assinante logado (saudação personalizada)
 lib/supabase/          — clients do Supabase (navegador, servidor, admin)
 private/                — o HTML do Gestor de Bolso, com os 200 frameworks fixos (não é público, só sai por /api/portal-content)
 public/lp.html           — a landing page de vendas (pública, é a home do site)
 supabase/schema.sql     — schema do banco de dados
+supabase/schema-cadastro.sql — colunas extras (cargo, whatsapp) usadas no cadastro
 middleware.ts           — protege as rotas /portal, /admin e as APIs relacionadas
 ```
 
@@ -115,9 +134,9 @@ editar esse arquivo diretamente) e publicar uma nova versão.
 Acesse `https://SEU-DOMINIO/admin` logado com um e-mail que esteja na
 variável de ambiente `ADMIN_EMAILS`. A área tem 2 abas:
 
-- **Assinantes** — ver todos (nome, e-mail, plano, status, último acesso),
-  adicionar alguém manualmente (cria a conta na hora, sem precisar de
-  senha nem convite) e remover acesso de alguém
+- **Assinantes** — ver todos (nome, e-mail, cargo, WhatsApp, plano, status,
+  último acesso), adicionar alguém manualmente (cria a conta na hora, sem
+  precisar de senha nem convite) e remover acesso de alguém
 - **Avisos** — publicar uma mensagem em destaque no topo do portal e na
   seção "Novidades", para todos os assinantes (some quando a pessoa clica
   em "Fechar", e não volta a aparecer para ela na mesma sessão)

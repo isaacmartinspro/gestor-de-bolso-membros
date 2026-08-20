@@ -1,6 +1,6 @@
-import LoginForm from "./LoginForm";
+import CadastroForm from "./CadastroForm";
 
-export default function LoginPage() {
+export default function CadastroPage() {
   return (
     <div className="auth-shell">
       <div className="auth-card">
@@ -8,11 +8,11 @@ export default function LoginPage() {
           <span className="dot" />
           Gestor de Bolso
         </div>
-        <h1>Entrar na sua conta</h1>
+        <h1>Criar seu acesso</h1>
         <p className="sub">
-          Use o e-mail e a senha que você criou no cadastro.
+          Preencha os dados abaixo para liberar seu acesso ao Gestor de Bolso.
         </p>
-        <LoginForm />
+        <CadastroForm />
       </div>
     </div>
   );
