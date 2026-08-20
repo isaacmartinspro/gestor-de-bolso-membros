@@ -10,7 +10,7 @@ export default function LoginPage() {
         </div>
         <h1>Entrar na sua conta</h1>
         <p className="sub">
-          Use o e-mail e a senha que você criou depois da compra.
+          Digite seu e-mail e enviaremos um código de acesso. Sem senha.
         </p>
         <LoginForm />
       </div>

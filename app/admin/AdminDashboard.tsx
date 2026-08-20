@@ -317,7 +317,7 @@ function SubscribersTab() {
             </div>
             <div style={{ display: "flex", gap: 10 }}>
               <button className="admin-btn admin-btn-primary" disabled={saving} onClick={handleAdd}>
-                {saving ? "Adicionando..." : "Adicionar e enviar convite"}
+                {saving ? "Adicionando..." : "Adicionar e liberar acesso"}
               </button>
               <button className="admin-btn" onClick={() => setShowForm(false)}>Cancelar</button>
             </div>

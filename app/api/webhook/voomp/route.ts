@@ -111,25 +111,24 @@ export async function POST(request: NextRequest) {
     });
   }
 
-  // Verifica se já existe uma conta de login para esse e-mail. Se não
-  // existir, cria e dispara automaticamente o e-mail de "criar senha"
-  // (fluxo de convite do Supabase Auth).
+  // Garante que existe uma conta de login para esse e-mail. Como o acesso
+  // agora é por código enviado ao e-mail (sem senha), não precisamos de um
+  // fluxo de convite/"criar senha" — só criamos a conta, já confirmada.
   const { data: existingUsers } = await supabase.auth.admin.listUsers();
   const alreadyHasAccount = existingUsers?.users?.some(
     (u) => u.email?.toLowerCase() === email.toLowerCase()
   );
 
   if (!alreadyHasAccount) {
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "";
-    const { error: inviteError } = await supabase.auth.admin.inviteUserByEmail(
+    const { error: createError } = await supabase.auth.admin.createUser({
       email,
-      { redirectTo: `${siteUrl}/set-password` }
-    );
+      email_confirm: true,
+    });
 
-    if (inviteError) {
-      console.error("Erro ao enviar convite de acesso:", inviteError);
+    if (createError) {
+      console.error("Erro ao criar conta de acesso:", createError);
       // Não falha o webhook por causa disso — a assinatura já está ativa
-      // no banco; o convite pode ser reenviado manualmente pelo Supabase
+      // no banco; a conta pode ser criada manualmente pela área de admin
       // se necessário.
     }
   }

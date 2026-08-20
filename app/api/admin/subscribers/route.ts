@@ -65,17 +65,15 @@ export async function POST(request: NextRequest) {
 
   if (dbError) return new NextResponse(dbError.message, { status: 500 });
 
-  // Se ainda não existe conta de login para esse e-mail, convida.
+  // Se ainda não existe conta de login para esse e-mail, cria — o acesso
+  // é por código enviado ao e-mail, então não precisa de senha nem convite.
   const { data: existingUsers } = await supabase.auth.admin.listUsers();
   const alreadyHasAccount = existingUsers?.users?.some(
     (u) => u.email?.toLowerCase() === email.toLowerCase()
   );
 
   if (!alreadyHasAccount) {
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "";
-    await supabase.auth.admin.inviteUserByEmail(email, {
-      redirectTo: `${siteUrl}/set-password`,
-    });
+    await supabase.auth.admin.createUser({ email, email_confirm: true });
   }
 
   return NextResponse.json(subscriber);
