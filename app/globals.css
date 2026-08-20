@@ -105,6 +105,32 @@ a{ color: inherit; }
   border-color: var(--amber);
 }
 
+.field-password-wrap{
+  position: relative;
+}
+
+.field-password-wrap input{
+  padding-right: 44px;
+}
+
+.field-password-toggle{
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--ink-faint);
+  cursor: pointer;
+  padding: 6px 8px;
+  font-size: 1.05rem;
+  line-height: 1;
+}
+
+.field-password-toggle:hover{
+  color: var(--ink);
+}
+
 .btn{
   width: 100%;
   font-family: 'Manrope', sans-serif;

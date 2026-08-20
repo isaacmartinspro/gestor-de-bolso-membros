@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import PasswordField from "@/app/components/PasswordField";
 
 export default function CadastroForm() {
   const router = useRouter();
@@ -125,31 +126,25 @@ export default function CadastroForm() {
         />
       </div>
 
-      <div className="field">
-        <label htmlFor="password">Crie sua senha</label>
-        <input
-          id="password"
-          type="password"
-          autoComplete="new-password"
-          required
-          value={form.password}
-          onChange={(e) => update("password", e.target.value)}
-          placeholder="Mínimo 8 caracteres"
-        />
-      </div>
+      <PasswordField
+        id="password"
+        label="Crie sua senha"
+        value={form.password}
+        onChange={(v) => update("password", v)}
+        placeholder="Mínimo 8 caracteres"
+        autoComplete="new-password"
+        required
+      />
 
-      <div className="field">
-        <label htmlFor="confirmPassword">Confirme a senha</label>
-        <input
-          id="confirmPassword"
-          type="password"
-          autoComplete="new-password"
-          required
-          value={form.confirmPassword}
-          onChange={(e) => update("confirmPassword", e.target.value)}
-          placeholder="Repita a senha"
-        />
-      </div>
+      <PasswordField
+        id="confirmPassword"
+        label="Confirme a senha"
+        value={form.confirmPassword}
+        onChange={(v) => update("confirmPassword", v)}
+        placeholder="Repita a senha"
+        autoComplete="new-password"
+        required
+      />
 
       <button type="submit" className="btn" disabled={loading}>
         {loading ? "Criando acesso..." : "Criar acesso e entrar"}
